@@ -1,0 +1,45 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {}
+
+body {
+    height: 100dvh;
+    overflow: hidden;
+    padding: 2rem;
+}
+
+.container {
+    display: grid;
+    height: 100%;
+    grid-template-areas:
+        "states main brand-filter"
+        "states main color-filter";
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 1rem;
+}
+
+.container>div {
+    border: 1px solid #000;
+}
+
+.main {
+    grid-area: main;
+}
+
+.left {
+    grid-area: states;
+}
+
+.right-top {
+    grid-area: brand-filter;
+
+}
+
+.right-bottom {
+    grid-area: color-filter;
+}
