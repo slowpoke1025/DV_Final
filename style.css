@@ -2,6 +2,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    user-select: none;
 }
 
 :root {}
@@ -42,4 +43,15 @@ body {
 
 .right-bottom {
     grid-area: color-filter;
+}
+
+/* .brush .extent {
+    fill-opacity: 1;
+    stroke: black;
+    shape-rendering: crispEdges;
+} */
+.selection {
+    fill-opacity: 0.3;
+    stroke: black;
+    z-index: 99;
 }
