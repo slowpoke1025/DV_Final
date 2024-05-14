@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Sales Bubble Chart</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .bubble {
+            fill: steelblue;
+            stroke: #fff;
+            opacity: 0.7;
+        }
+
+        .bubble:hover {
+            opacity: 1;
+        }
+
+        .brand-label {
+            font-size: 12px;
+            text-anchor: middle;
+            fill: #000000;
+        }
+    </style>
+</head>
+<body>
+    <svg width="1000" height="1000"></svg>
+
+    <script>
+        // Load data from CSV file
+        d3.csv("dataset/car_prices_cleaned.csv").then(function(data) {
+            // Count sales for each brand
+            var brandSales = d3.rollup(data, v => v.length, d => d.make);
+
+            // Convert brandSales map to array of objects
+            var brandSalesArray = Array.from(brandSales, ([make, count]) => ({ make, count }));
+
+            // Set up the SVG
+            var svg = d3.select("svg"),
+                width = +svg.attr("width"),
+                height = +svg.attr("height");
+
+            // Calculate the minimum count value
+            var minCount = d3.min(brandSalesArray, d => d.count);
+
+            // Set a minimum radius for bubbles
+            var minRadius = 10; // Adjust as needed
+
+            // Create simulation for bubbles
+            var simulation = d3.forceSimulation(brandSalesArray)
+                .force("center", d3.forceCenter(width / 2, height / 2))
+                .force("collide", d3.forceCollide().radius(d => Math.max(Math.sqrt(d.count) * 0.5, minRadius)))
+                .force("charge", d3.forceManyBody().strength(-10))
+                .force("attract", d3.forceManyBody().strength(30))
+                .on("tick", ticked);
+
+            // Append bubbles
+            var bubbles = svg.selectAll(".bubble")
+                .data(brandSalesArray)
+                .enter().append("circle")
+                .attr("class", "bubble")
+                .attr("r", d => Math.max(Math.sqrt(d.count) * 0.5, minRadius))
+                .style("fill", "steelblue");
+
+            // Append brand labels
+            var labels = svg.selectAll(".brand-label")
+                .data(brandSalesArray)
+                .enter().append("text")
+                .attr("class", "brand-label")
+                .attr("x", d => d.x)
+                .attr("y", d => d.y)
+                .text(d => d.make);
+
+            // Function to update bubble positions
+            function ticked() {
+                bubbles
+                    .attr("cx", d => d.x)
+                    .attr("cy", d => d.y);
+                
+                labels
+                    .attr("x", d => d.x)
+                    .attr("y", d => d.y);
+            }
+        });
+    </script>
+</body>
+</html>
