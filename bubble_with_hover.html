@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Car Sales Bubble Chart Filter</title>
+    <title>Car Sales Bubble Chart</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         .bubble {
             fill: steelblue;
-            stroke: #ffffff;
-            stroke-width: 3px;
+            stroke: #fff;
             opacity: 0.7;
+            stroke-width: 3px;
         }
 
         .bubble:hover {
@@ -22,10 +22,43 @@
             text-anchor: middle;
             fill: #000000;
         }
+
+        .tooltip {
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            pointer-events: none;
+            display: none;
+        }
+        .chart {
+        width: 800px;
+        height: 400px;
+        margin: 20px auto;
+        border: 1px solid #ccc;
+        padding: 20px;
+        }
+        .line {
+        fill: none;
+        stroke: steelblue;
+        stroke-width: 2px;
+        }
+        .axis path,
+        .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+        }
+        .axis text {
+        font-size: 12px;
+        }
     </style>
 </head>
 <body>
     <svg width="1000" height="1000"></svg>
+    <div class="tooltip" id="tooltip">
+        <div class="chart"></div>
+    </div>
 
     <script>
         // Load data from CSV file
@@ -40,10 +73,7 @@
             var svg = d3.select("svg"),
                 width = +svg.attr("width"),
                 height = +svg.attr("height");
-
-            // Calculate the minimum count value
-            var minCount = d3.min(brandSalesArray, d => d.count);
-
+            
             // Set a minimum radius for bubbles
             var minRadius = 15; // Adjust as needed
 
@@ -61,7 +91,9 @@
                 .enter().append("circle")
                 .attr("class", "bubble")
                 .attr("r", d => Math.max(Math.sqrt(d.count) * 0.5, minRadius))
-                .style("fill", "steelblue");
+                .style("fill", "steelblue")
+                .on("mouseover", showTooltip)
+                .on("mouseleave", hideTooltip);
 
             // Append brand labels
             var labels = svg.selectAll(".brand-label")
@@ -82,7 +114,20 @@
                     .attr("x", d => d.x)
                     .attr("y", d => d.y);
             }
+
+            // Show tooltip function
+            function showTooltip(d) {
+                var tooltip = d3.select("#tooltip");
+                tooltip.style("display", "block");
+            }
+
+            // Hide tooltip function
+            function hideTooltip(d) {
+                var tooltip = d3.select("#tooltip");
+                tooltip.style("display", "none");
+            }
         });
     </script>
+    <script src="bubble_hover.js"></script>
 </body>
 </html>
