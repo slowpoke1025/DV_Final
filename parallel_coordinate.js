@@ -1,32 +1,55 @@
+import Colorbar from "./colorbar.js";
+export function Parallel_coordinate(main, data) {
 
-const main = document.querySelector(".main")
-let { width: main_width, height: main_height } = main.getBoundingClientRect()
-
-const margin = { top: 30, right: 30, bottom: 30, left: 30 },
-    width = +main_width - margin.left - margin.right,
-    height = +main_height - margin.top - margin.bottom;
-
-// append the svg object to the body of the page
-const svg = d3.select(main)
-    .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .attr("style", "max-width: 100%; height: auto;")
-    .append("g")
-    .attr("transform", `translate(${margin.left}, ${margin.top})`)
-    .style("font-family", "Georgia, serif")
-
-
-d3.csv("./dataset/car_prices_cleaned.csv").then(data => {
     const columns = data.columns;
-    console.log(columns);
     data = data.slice(0, 1000)
     const dimensions = columns.filter(d => [/*"age", */"condition", "year", "mmr", "odometer", "sellingprice"].includes(d))
 
-    const y_l = {}
+
+    // const sets = {}
+    // sets["body"] = new Set(data.map(d => d.body))
+    // const colors = {}
+    // colors["body"] = d3.scaleOrdinal(Array.from(sets["body"]), d3.schemeCategory10)
+
+    const y_l = {}, extents = {}, ticks = 5, tickValues = {}
+    let target = dimensions[0]
+    for (let col of dimensions) {
+        extents[col] = d3.extent(data, d => +d[col])
+        let t = d3.scaleLinear([0, ticks - 1], extents[col])
+        tickValues[col] = new Array(ticks).fill(0).map((_, i) => t(i))
+    }
+
+    function update(col) {
+        target = col
+        return extents[col]
+    }
+
+    d3.select(".pc-control").node().append(Colorbar(300, extents[target], 80, { vertical: false, rotate: 0, titles: dimensions, update }))
+
+    setTimeout(() => {
+        console.log(main.getBoundingClientRect());
+    }, 6000)
+
+    let { width: main_width, height: main_height } = main.getBoundingClientRect()
+    console.log(main_width, main_height);
+    const margin = { top: 60, right: 30, bottom: 30, left: 30 },
+        width = +main_width - margin.left - margin.right,
+        height = +main_height - margin.top - margin.bottom;
+
+    // append the svg object to the body of the page
+    const svg = d3.select(main)
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .attr("style", "max-width: 100%; height: auto;")
+        .append("g")
+        .attr("transform", `translate(${margin.left}, ${margin.top})`)
+        .style("font-family", "Georgia, serif")
+
+
     for (let col of dimensions) {
         y_l[col] = d3.scaleLinear()
-            .domain(d3.extent(data, d => +d[col]))
+            .domain(extents[col])
             .range([height, 0])
     }
 
@@ -48,8 +71,19 @@ d3.csv("./dataset/car_prices_cleaned.csv").then(data => {
         .attr("d", path)
         .attr("fill", "none")
         .attr("stroke", d => color(d[dimensions[0]]))//"#69b3a2"
+        // .attr("stroke", d => colors["body"](d.body))//
+        // .attr("class", d => `line ${d.body}`)
         .attr("opacity", 1)
         .attr("stroke-width", 0.5)
+    // .on("mouseover", (e, d) => {
+    //     e.stopPropagation()
+    //     d3.selectAll(`.line:not(.${d.body})`).classed("deactive", true).lower()
+    // })
+    // .on("mouseout", (e, d) => {
+    //     e.stopPropagation()
+    //     d3.selectAll(`.line:not(.${d.body})`).classed("deactive", false)
+    // })
+
 
     const axesMap = new Map()
     const axes = svg.selectAll("myAxis")
@@ -58,29 +92,40 @@ d3.csv("./dataset/car_prices_cleaned.csv").then(data => {
         .join("g")
         // I translate this element to its right position on the x axis
         .attr("transform", function (d) { return `translate(${+ x_l(d)}, 0)`; })
+        .classed("axis", true)
         // And I build the axis with the call function
         .each(function (d) {
             d3.select(this)
                 .call(
                     d3.axisLeft(y_l[d])
                         .ticks(2)
-                        .tickValues(d3.extent(data, p => +p[d]))
+                        .tickValues(tickValues[d])
                 )
                 .call(self => axesMap.set(d, self))
                 .selectAll("text")
-                .style("font-size", "8px");
+                .style("font-size", "12px")
+
+                .clone(true).lower()
+                .attr("stroke-width", 5)
+                .attr("stroke", "white");
+
         })
+    d3.selectAll(".axis .domain")
+        .style("stroke-width", "3px")
+
+
+
 
 
     const texts = svg.selectAll("myText")
         .data(dimensions)
         .join("text")
         .attr("transform", function (d) { return `translate(${+ x_l(d)}, 0)`; })
-        .attr("y", -10)
+        .attr("y", -15)
         .text((d) => d)
         .attr("fill", "#888")
 
-        .attr("font-size", 9)
+        .attr("font-size", 14)
         // .attr("transform", `rotate(${45})`)
         // .attr("transform", (d, i) => `rotate(45, 0, -10)`)
         .attr("text-anchor", "middle")
@@ -102,6 +147,8 @@ d3.csv("./dataset/car_prices_cleaned.csv").then(data => {
 
 
     axes.call(brush)
+
+
 
 
     const selections = new Map();
@@ -164,5 +211,4 @@ d3.csv("./dataset/car_prices_cleaned.csv").then(data => {
     // https://observablehq.com/@d3/circle-dragging-ii
     // https://gist.github.com/jasondavies/1341281
 
-
-})
+}
