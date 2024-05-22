@@ -11,8 +11,8 @@ body {
     height: 100dvh;
     overflow: hidden;
     padding: 2rem;
-    background-color: #2e2e2e;
-    background-color: hsl(210 7% 11%);
+    /* background-color: #2e2e2e;
+    background-color: hsl(210 7% 11%); */
 
 }
 
@@ -29,7 +29,7 @@ body {
 }
 
 .mycontainer>div {
-    border: 2px solid #52ffeb;
+    border: 5px solid teal;
     border-radius: 8px;
 }
 
@@ -206,6 +206,7 @@ body {
 }
 
 
+/**/
 #parallel_coordinate {
     display: flex;
     flex-direction: column;
@@ -214,7 +215,7 @@ body {
 
 .pc-control {
     flex: 1;
-    background-color: #ffffff11;
+    background-color: #afafaf;
 }
 
 .pc-control {
@@ -223,5 +224,24 @@ body {
 
 .pc-container {
     flex: 9;
+
+}
+
+
+#parallel_sets {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.ps-control {
+    flex: 1;
+    background-color: #ffffff11;
+    padding: 20px;
+}
+
+.ps-container {
+    flex: 9;
+    background-color: #fff;
 
 }

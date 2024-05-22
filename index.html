@@ -11,8 +11,10 @@
     <link rel="stylesheet" href="style.css">
     <script src="./lib/d3@6.js"></script>
     <script src="./lib/topojson.js"></script>
+    <script src="./lib/d3-sankey@0.js"></script>
     <script src="https://unpkg.com/d3-sankey@0"></script>
     <script defer src="parallel_coordinate.js" type="module"></script>
+    <script defer src="parallel_sets.js" type="module"></script>
     <script defer src="MapFilter.js" type="module"></script>
     <script defer src="colorbar.js" type="module"></script>
     <script defer src="script.js" type="module"></script>
@@ -35,7 +37,7 @@
                         data-bs-target="#pc-container" type="button" role="tab">ParallelCoordinate</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile"
+                    <button class="nav-link" id="parallel_sets-tab" data-bs-toggle="tab" data-bs-target="#ps-container"
                         type="button" role="tab">ParallelSet</button>
                 </li>
                 <li class="nav-item" role="presentation">
@@ -45,15 +47,19 @@
             </ul>
 
             <div class="tab-content main-container " id="myTabContent">
-                <div class="tab-pane fade show active parallel_coordinate" id="pc-container" role="tabpanel"
-                    aria-labelledby="home-tab">
+                <div class="tab-pane fade show active parallel_coordinate" id="pc-container" role="tabpanel">
                     <div id="parallel_coordinate">
                         <div class="pc-control"></div>
                         <div class="pc-container"></div>
                     </div>
 
                 </div>
-                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">..d.</div>
+                <div class="tab-pane fade" role="tabpanel" id="ps-container">
+                    <div id="parallel_sets">
+                        <div class="ps-control"></div>
+                        <div class="ps-container"></div>
+                    </div>
+                </div>
                 <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">..f.</div>
             </div>
 
