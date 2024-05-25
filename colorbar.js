@@ -4,7 +4,7 @@ export default function Colorbar(
   w,
   {
     vertical = true,
-    interpolater = d3.interpolateBlues,
+    interpolator = d3.interpolateBlues,
     margin = { top: 10, right: 35, bottom: 30, left: 30 },
     update = function () {},
     pad = 8,
@@ -22,7 +22,7 @@ export default function Colorbar(
 
   const main = vertical ? height : width;
   const y = d3.scaleLinear(extent, vertical ? [main, 0] : [0, main]);
-  const color = d3.scaleSequential([0, main], interpolater);
+  const color = d3.scaleSequential([0, main], interpolator);
   console.log(main, extent);
   const colorbar_container = d3
     .create("div")
@@ -60,7 +60,7 @@ export default function Colorbar(
     .append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-  function updateColorScale(extent) {
+  function updateColorScale(extent, interpolator) {
     y.domain(extent);
     t.range(extent);
     tickValues = new Array(ticks).fill(0).map((_, i) => Math.round(t(i)));
@@ -70,6 +70,10 @@ export default function Colorbar(
       axis.selectAll("text").attr("fill", "#fff");
       axis.select(".domain").attr("stroke", "#fff");
       axis.selectAll("line").attr("stroke", "#fff");
+      color.interpolator(interpolator);
+      rects.style("fill", (d) =>
+        color(vertical ? main - d / delta : d / delta)
+      );
     }
   }
   // const options = select

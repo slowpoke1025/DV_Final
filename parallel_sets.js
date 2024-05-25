@@ -1,6 +1,11 @@
 // set the dimensions and margins of the graph
 export function Parallel_Sets(main, data) {
-  let { width: main_width, height: main_height } = main.getBoundingClientRect();
+  let {
+    width: main_width,
+    height: main_height,
+    x: _x,
+    y: _y,
+  } = main.getBoundingClientRect();
   console.log(main_width, main_height);
   const margin = { top: 60, right: 80, bottom: 30, left: 80 },
     width = +main_width - margin.left - margin.right,
@@ -160,6 +165,8 @@ export function Parallel_Sets(main, data) {
   }
 
   console.log(links);
+
+  const tooltip = d3.select(".ps_tooltip");
   let link = g
     .selectAll()
     .data(links)
@@ -171,11 +178,23 @@ export function Parallel_Sets(main, data) {
     .attr("stroke-width", (d) => d.width)
     .style("mix-blend-mode", "multiply")
     .attr("class", (d) => ` link ${d.names.join("_")}`)
-    .on("mouseenter", (e, d) => {
+    .on("mouseover", (e, d) => {
       link.classed("deactive", true);
       upstream(d, true);
       d3.select(e.target).classed("deactive", false);
       downstream(d, true);
+
+      tooltip
+        .classed("active", true)
+        .style("left", `${e.pageX - _x + 10}px`)
+        .style("top", `${e.pageY - _y + 10}px`)
+        .html(
+          `<text>${d.names.join(
+            "<span class='arrow'> → </span> "
+          )} <span class='total' style="color:${color(
+            d.names[0]
+          )};">&nbsp;${d.value.toLocaleString()}</span></text>`
+        );
     })
     .on("mouseout", (e, d) => {
       downstream(d, false);

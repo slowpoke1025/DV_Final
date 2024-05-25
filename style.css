@@ -23,6 +23,7 @@ body {
 
 #myTab>* {
     flex: 1 0 0;
+
 }
 
 #myTab .nav-link {
@@ -54,7 +55,7 @@ body {
     /* border: 3px solid rgb(0, 0, 0); */
     border-radius: 8px;
     box-shadow: 0 0 5px #f1eeee;
-    overflow: hidden;
+    /* overflow: hidden; */
     background-color: #84848420;
 
 
@@ -80,15 +81,16 @@ body {
     grid-area: states;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .map-container {
     /* flex: 5; */
     height: 100%;
-    perspective: 2000px;
+    position: relative;
 }
 
-.map-container svg:hover {}
+.map-container svg {}
 
 .map-control {
     /* flex: 1; */
@@ -117,6 +119,7 @@ body {
 
 .right-bottom {
     grid-area: color-filter;
+    position: relative;
 }
 
 /* .brush .extent {
@@ -285,9 +288,95 @@ label {
 .ps-container {
     flex: 9;
     background-color: #ffffff;
-
+    position: relative;
 }
 
 .link.deactive {
-    stroke: #9a9a9a;
+    stroke: #dfd9d979;
+}
+
+.map_tooltip {
+    position: absolute;
+    background-color: #000000a9;
+    font-size: 16px;
+    display: none;
+    box-shadow: 0 0 3px #333;
+    width: max-content;
+    padding: .3rem .5rem;
+    border-radius: 8px;
+    color: #fff;
+    left: 0;
+    right: 0;
+    z-index: 99;
+}
+
+.map_tooltip.active {
+    display: block;
+}
+
+.map_tooltip ul {
+    margin: 0;
+    padding: .5rem;
+    padding-left: 1.7rem;
+    list-style: disc;
+}
+
+
+.map_tooltip>.state-name {
+    margin: 0;
+    padding: .3rem;
+    border-bottom: 3px solid #f3bc00;
+
+}
+
+
+li.size::marker {
+    color: #178ac3;
+}
+
+li.mean::marker {
+    color: #0f9449;
+}
+
+li.sum::marker {
+    color: #d32929;
+}
+
+.highlight {
+    font-weight: bold;
+}
+
+.ps_tooltip {
+    position: absolute;
+    background-color: #000000ae;
+    font-size: 16px;
+    display: none;
+    box-shadow: 0 0 3px #333;
+    width: max-content;
+    padding: .3rem .5rem;
+    border-radius: 8px;
+    color: #fff;
+    left: 0;
+    right: 0;
+}
+
+.ps_tooltip.active {
+    display: block;
+}
+
+.ps_tooltip {
+    margin: 0;
+    padding: .5rem;
+}
+
+.ps_tooltip .arrow {
+    color: #ffca1b;
+    font-weight: bold;
+}
+
+.ps_tooltip .total {
+    font-weight: bolder;
+    font-size: 17px;
+
+
 }

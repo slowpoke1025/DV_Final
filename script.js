@@ -12,7 +12,7 @@ d3.csv("./dataset/car_prices_cleaned.csv").then(async (data) => {
   data.columns = columns;
 
   const parallel_coordinate = document.querySelector(".pc-container");
-  Parallel_coordinate(parallel_coordinate, data);
+  const { updateColor_PC } = Parallel_coordinate(parallel_coordinate, data);
   LOADED["parallel_coordinate"] = true;
 
   document
@@ -36,7 +36,8 @@ d3.csv("./dataset/car_prices_cleaned.csv").then(async (data) => {
     data,
     function () {
       const _data = data.filter((d) => getStates().has(d.state));
-      console.log("update global");
+      console.log(getStates());
+      updateMap(_data);
     }
   );
 
@@ -46,6 +47,14 @@ d3.csv("./dataset/car_prices_cleaned.csv").then(async (data) => {
     d.addEventListener("click", (e) => {
       const value = e.target.dataset.color;
       dropdownColorVarBtn.textContent = value;
+      const unique = new Set();
+      data.forEach((d) => {
+        if (!unique.has(d[value])) {
+          unique.add(d[value]);
+        }
+      });
+      const color = d3.scaleOrdinal([...unique], d3.schemeTableau10);
+      updateColor_PC(color, value);
     });
   });
 });

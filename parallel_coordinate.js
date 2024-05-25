@@ -20,6 +20,43 @@ export function Parallel_coordinate(main, data) {
     extents = {},
     ticks = 5,
     tickValues = {};
+  let linear_flag = true,
+    color_c,
+    col_c;
+
+  const check = document.getElementById("pc-color-switch");
+  check.disabled = true;
+  check.addEventListener("change", (e) => {
+    if (check.checked) {
+      linear_flag = false;
+      lines
+        .attr("stroke", (d) => color_c(d[col_c]))
+        .attr("class", (d) => `link ${d[col_c]}`)
+        .on("mouseover", (e, d) => {
+          if (d3.select(e.target).classed("deactive")) return;
+          d3.selectAll(`.link:not(.${d[col_c]})`)
+            .lower()
+            .classed("deactive", true);
+
+          d3.selectAll(`.link.${d[col_c]}:not(.deactive)`).attr(
+            "stroke",
+            color_c(d[col_c])
+          );
+        })
+        .on("mouseout", (e, d) => {
+          lines.each(lines_select);
+        });
+    } else {
+      linear_flag = true;
+      lines
+        // .attr("stroke", (d) => color(d[dimensions[0]])) //"#69b3a2"
+        .attr("class", (d) => `line`)
+        .each(lines_select)
+        .on("mouseover", null)
+        .on("mouseout", null);
+    }
+  });
+
   let target = dimensions[0];
   for (let col of dimensions) {
     extents[col] = d3.extent(data, (d) => +d[col]);
@@ -40,7 +77,7 @@ export function Parallel_coordinate(main, data) {
     dark: true,
     update,
   });
-  d3.select(".pc-control").node().append(colorbar);
+  // d3.select(".pc-control").node().append(colorbar);
 
   let { width: main_width, height: main_height } = main.getBoundingClientRect();
   console.log(main_width, main_height);
@@ -72,6 +109,7 @@ export function Parallel_coordinate(main, data) {
     y_l[dimensions[0]].domain(),
     d3.interpolateBrBG
   );
+
   const lines = svg
     .selectAll("lines")
     .data(data)
@@ -80,9 +118,9 @@ export function Parallel_coordinate(main, data) {
     .attr("fill", "none")
     .attr("stroke", (d) => color(d[dimensions[0]])) //"#69b3a2"
     // .attr("stroke", d => colors["body"](d.body))//
-    // .attr("class", d => `line ${d.body}`)
+    .attr("class", (d) => `line`)
     .attr("opacity", 1)
-    .attr("stroke-width", 0.5);
+    .attr("stroke-width", 1);
   // .on("mouseover", (e, d) => {
   //     e.stopPropagation()
   //     d3.selectAll(`.line:not(.${d.body})`).classed("deactive", true).lower()
@@ -224,11 +262,44 @@ export function Parallel_coordinate(main, data) {
       return +d[key] >= min && +d[key] <= max;
     });
     if (active) {
-      d3.select(this).attr("stroke", color(+d[dimensions[0]]));
+      d3.select(this)
+        .attr(
+          "stroke",
+          linear_flag ? color(+d[dimensions[0]]) : color_c(d[col_c])
+        )
+        .classed("deactive", false);
     } else {
-      d3.select(this).attr("stroke", "#dddddddd").lower();
+      d3.select(this).lower().classed("deactive", true); //stroke color in css
     }
+  }
+
+  function updateColor(color, col) {
+    color_c = color;
+    col_c = col;
+    check.disabled = false;
+    check.checked = true;
+    linear_flag = false;
+    lines
+      .attr("class", (d) => `link ${d[col_c]}`)
+      .each(lines_select)
+
+      .on("mouseover", (e, d) => {
+        if (d3.select(e.target).classed("deactive")) return;
+        d3.selectAll(`.link:not(.${d[col_c]})`)
+          .lower()
+          .classed("deactive", true);
+
+        d3.selectAll(`.link.${d[col_c]}:not(.deactive)`).attr(
+          "stroke",
+          color_c(d[col_c])
+        );
+      })
+      .on("mouseout", (e, d) => {
+        lines.each(lines_select);
+      });
   }
   // https://observablehq.com/@d3/circle-dragging-ii
   // https://gist.github.com/jasondavies/1341281
+
+  return { updateColor_PC: updateColor };
 }
