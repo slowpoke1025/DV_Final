@@ -6,7 +6,11 @@ import { Parallel_coordinate } from "./parallel_coordinate.js";
 import { Parallel_Sets } from "./parallel_sets.js";
 
 const LOADED = {};
-d3.csv("./dataset/car_prices_cleaned.csv").then((data) => {
+d3.csv("./dataset/car_prices_cleaned.csv").then(async (data) => {
+  const columns = data.columns;
+  data = data.slice(0, 1000);
+  data.columns = columns;
+
   const parallel_coordinate = document.querySelector(".pc-container");
   Parallel_coordinate(parallel_coordinate, data);
   LOADED["parallel_coordinate"] = true;
@@ -26,5 +30,22 @@ d3.csv("./dataset/car_prices_cleaned.csv").then((data) => {
 
   const map = d3.select(".left>.map-container").node();
   const map_control = d3.select(".left>.map-control").node();
-  MapFilter(map, map_control);
+  const { getStates, updateMap } = await MapFilter(
+    map,
+    map_control,
+    data,
+    function () {
+      const _data = data.filter((d) => getStates().has(d.state));
+      console.log("update global");
+    }
+  );
+
+  const color_options = document.querySelectorAll("[data-color]");
+  const dropdownColorVarBtn = document.getElementById("dropdownColorVarBtn");
+  color_options.forEach((d) => {
+    d.addEventListener("click", (e) => {
+      const value = e.target.dataset.color;
+      dropdownColorVarBtn.textContent = value;
+    });
+  });
 });

@@ -2,7 +2,7 @@
 export function Parallel_Sets(main, data) {
   let { width: main_width, height: main_height } = main.getBoundingClientRect();
   console.log(main_width, main_height);
-  const margin = { top: 60, right: 30, bottom: 30, left: 30 },
+  const margin = { top: 60, right: 80, bottom: 30, left: 80 },
     width = +main_width - margin.left - margin.right,
     height = +main_height - margin.top - margin.bottom;
 
@@ -69,10 +69,10 @@ export function Parallel_Sets(main, data) {
   //用 promise, 不用 callback
   data.forEach((d) => {
     d.saledate = new Date(d.saledate).getFullYear();
-    d.sellingprice = Math.round(d.sellingprice / 10000);
+    // d.sellingprice = Math.round(d.sellingprice / 10000);
   });
 
-  const columns = ["body", "transmission", "saledate"];
+  const columns = ["body", "transmission", "interior", "color"];
 
   let nodesByKey = {};
   let graph = generateGraph(data, columns);
@@ -132,7 +132,34 @@ export function Parallel_Sets(main, data) {
   //     .text(d => `${d.name}\n${d.value.toLocaleString()}`)
 
   // const linksbykey = new d3.InternMap([], JSON.stringify);
+  function downstream(d, flag) {
+    const arr = d.target.sourceLinks.filter((e) => {
+      for (let i in d.names) {
+        if (d.names[i] != e.names[i]) return false;
+      }
+      return true;
+    });
+    arr.forEach((d) => {
+      d3.select("." + d.names.join("_")).classed("deactive", !flag);
+      downstream(d, flag);
+    });
+  }
 
+  function upstream(d, flag) {
+    const arr = d.source.targetLinks.filter((e) => {
+      for (let i in e.names) {
+        if (d.names[i] != e.names[i]) return false;
+      }
+      return true;
+    });
+    arr.forEach((d) => {
+      d3.select("." + d.names.join("_")).classed("deactive", !flag);
+      // .attr("stroke", flag ? "red" : color(d.names[0]));
+      upstream(d, flag);
+    });
+  }
+
+  console.log(links);
   let link = g
     .selectAll()
     .data(links)
@@ -143,11 +170,21 @@ export function Parallel_Sets(main, data) {
     .attr("opacity", 0.7)
     .attr("stroke-width", (d) => d.width)
     .style("mix-blend-mode", "multiply")
+    .attr("class", (d) => ` link ${d.names.join("_")}`)
     .on("mouseenter", (e, d) => {
-      // console.log(d);
+      link.classed("deactive", true);
+      upstream(d, true);
+      d3.select(e.target).classed("deactive", false);
+      downstream(d, true);
+    })
+    .on("mouseout", (e, d) => {
+      downstream(d, false);
+      upstream(d, false);
+      link.classed("deactive", false);
     });
 
-  link
+  const titles = link
+    // .attr("class", (d) => " ".join(d.names))
     .append("title")
     .text((d) => `${d.names.join(" → ")}\n${d.value.toLocaleString()}`);
 
@@ -161,11 +198,18 @@ export function Parallel_Sets(main, data) {
     .attr("y", (d) => (d.y1 + d.y0) / 2)
     .attr("dy", "0.35em")
     .attr("text-anchor", (d) => (d.x0 < width / 2 ? "start" : "end"))
-    .text((d) => d.val);
+    .text((d) => d.val)
+    .attr("font-size", 15)
+    .attr("fill", "#000")
+    // .style("filter", "drop-shadow(0 0 5px #fff)")
+
+    .attr("class", (d) => `label ${d.name}`)
+    .style("font-weight", "bold");
 
   const counts = values
     .append("tspan")
     .attr("fill-opacity", 0.7)
+    .style("display", "none")
     .text((d) => ` ${d.value.toLocaleString()}`);
 
   console.log(nodes);
@@ -182,15 +226,23 @@ export function Parallel_Sets(main, data) {
     .attr("y", -10)
     .attr("text-anchor", "middle")
     .text((d) => d)
+    .attr("font-size", 16)
+    .attr("font-weight", "bold")
+    .attr("cursor", "pointer")
+
     .call(
       d3
         .drag()
-        .on("start", function () {
-          // this.parentNode.appendChild(this);
-        })
+        .on("start", function () {})
         .on("drag", dragmoveX)
         .on("end", dragendX)
-    );
+    )
+    .on("mouseenter", (e, d) => {
+      d3.selectAll("text." + d + " tspan").style("display", "inline");
+    })
+    .on("mouseout", (e, d) => {
+      d3.selectAll("text." + d + " tspan").style("display", "none");
+    });
 
   let node = g
     .append("g")
@@ -213,6 +265,7 @@ export function Parallel_Sets(main, data) {
         })
         .on("drag", dragmoveY)
     );
+
   let _columns = [...columns];
 
   function Swap() {
@@ -295,6 +348,26 @@ export function Parallel_Sets(main, data) {
       .attr("stroke", (d) => color(d.names[0]))
       .attr("stroke-width", (d) => d.width);
 
+    link
+      .attr("class", (d) => ` link ${d.names.join("_")}`)
+      .on("mouseenter", (e, d) => {
+        link.classed("deactive", true);
+        upstream(d, true);
+        d3.select(e.target).classed("deactive", false);
+        downstream(d, true);
+      })
+      .on("mouseout", (e, d) => {
+        downstream(d, false);
+        upstream(d, false);
+        link.classed("deactive", false);
+      });
+
+    // .selectAll("title")
+    // .text((d) => `${d.names.join(" → ")}\n${d.value.toLocaleString()}`);
+    titles
+      .data(links)
+      .text((d) => `${d.names.join(" → ")}\n${d.value.toLocaleString()}`);
+
     node
       .data(nodes)
       .transition()
@@ -343,8 +416,10 @@ export function Parallel_Sets(main, data) {
       .attr("text-anchor", (d) => (d.x0 < width / 2 ? "start" : "end"))
       .text((d) => d.val)
       .attr("opacity", 1)
+      .attr("class", (d) => `label ${d.name}`)
       .append("tspan")
       .attr("fill-opacity", 0.7)
+      .style("display", "none")
       .text((d) => ` ${d.value.toLocaleString()}`);
   }
 
