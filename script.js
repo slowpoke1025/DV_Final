@@ -54,7 +54,7 @@ d3.csv("./dataset/car_prices_cleaned.csv").then(async (data) => {
         }
       });
       const color = d3.scaleOrdinal([...unique], d3.schemeTableau10);
-      updateColor_PC(color, value);
+      updateColor_PC(color, value, unique);
     });
   });
 });

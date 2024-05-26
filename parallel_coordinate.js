@@ -20,6 +20,8 @@ export function Parallel_coordinate(main, data) {
     extents = {},
     ticks = 5,
     tickValues = {};
+
+  let selectList = new Set();
   let linear_flag = true,
     color_c,
     col_c;
@@ -30,8 +32,10 @@ export function Parallel_coordinate(main, data) {
     if (check.checked) {
       linear_flag = false;
       lines
-        .attr("stroke", (d) => color_c(d[col_c]))
+        // .attr("stroke", (d) => color_c(d[col_c]))
         .attr("class", (d) => `link ${d[col_c]}`)
+        .each(lines_select)
+
         .on("mouseover", (e, d) => {
           if (d3.select(e.target).classed("deactive")) return;
           d3.selectAll(`.link:not(.${d[col_c]})`)
@@ -46,14 +50,29 @@ export function Parallel_coordinate(main, data) {
         .on("mouseout", (e, d) => {
           lines.each(lines_select);
         });
+      d3.select(".color-legend")
+        .style("display", "grid")
+        .selectAll(".rect")
+        .on("mouseover", (e, d) => {
+          if (d3.select(e.target).classed("deactive")) return;
+          d3.selectAll(`.link:not(.${d})`).lower().classed("deactive", true);
+
+          d3.selectAll(`.link.${d}:not(.deactive)`).attr("stroke", color_c(d));
+        })
+        .on("mouseout", (e, d) => {
+          lines.each(lines_select);
+        });
+      d3.select(colorbar).style("display", "none");
     } else {
       linear_flag = true;
       lines
         // .attr("stroke", (d) => color(d[dimensions[0]])) //"#69b3a2"
-        .attr("class", (d) => `line`)
+        .attr("class", (d) => `link`)
         .each(lines_select)
         .on("mouseover", null)
         .on("mouseout", null);
+      d3.select(".color-legend").style("display", "none");
+      d3.select(colorbar).style("display", "block");
     }
   });
 
@@ -68,16 +87,26 @@ export function Parallel_coordinate(main, data) {
     target = col;
     return extents[col];
   }
-  const [colorbar, updateColorBar] = Colorbar(300, extents[target], 60, {
-    vertical: false,
-    rotate: 0,
-    titles: dimensions,
-    flag: true,
-    interpolater: d3.interpolateBrBG,
-    dark: true,
-    update,
-  });
-  // d3.select(".pc-control").node().append(colorbar);
+
+  const [colorbar, updateColorBar] = Colorbar(
+    d3.select(".pc-control").node().clientWidth,
+    extents[target],
+    80,
+    {
+      vertical: false,
+      rotate: 0,
+      titles: dimensions,
+      flag: false,
+      interpolator: d3.interpolateBrBG,
+      dark: true,
+      update,
+      ticks: 6,
+      titles: dimensions,
+      margin: { left: 30, top: 25, right: 80, bottom: 40 },
+    }
+  );
+
+  d3.select(".pc-control").node().append(colorbar);
 
   let { width: main_width, height: main_height } = main.getBoundingClientRect();
   console.log(main_width, main_height);
@@ -118,7 +147,7 @@ export function Parallel_coordinate(main, data) {
     .attr("fill", "none")
     .attr("stroke", (d) => color(d[dimensions[0]])) //"#69b3a2"
     // .attr("stroke", d => colors["body"](d.body))//
-    .attr("class", (d) => `line`)
+    .attr("class", (d) => `link select`)
     .attr("opacity", 1)
     .attr("stroke-width", 1);
   // .on("mouseover", (e, d) => {
@@ -246,6 +275,7 @@ export function Parallel_coordinate(main, data) {
         })
         .ease(d3.easeBounce);
       lines.transition().duration(1000).attr("d", path).ease(d3.easeBounce);
+      updateColorBar(extents[dimensions[0]], d3.interpolateBrBG, dimensions[0]);
     }
     return d3
       .drag()
@@ -262,6 +292,8 @@ export function Parallel_coordinate(main, data) {
       return +d[key] >= min && +d[key] <= max;
     });
     if (active) {
+      if (!linear_flag && !selectList.has(d[col_c]))
+        return d3.select(this).lower();
       d3.select(this)
         .attr(
           "stroke",
@@ -273,12 +305,15 @@ export function Parallel_coordinate(main, data) {
     }
   }
 
-  function updateColor(color, col) {
+  const lengends = d3.select(".color-legend");
+  function updateColor(color, col, unique) {
     color_c = color;
     col_c = col;
     check.disabled = false;
     check.checked = true;
     linear_flag = false;
+    selectList = new Set(unique);
+
     lines
       .attr("class", (d) => `link ${d[col_c]}`)
       .each(lines_select)
@@ -297,6 +332,51 @@ export function Parallel_coordinate(main, data) {
       .on("mouseout", (e, d) => {
         lines.each(lines_select);
       });
+
+    const legend = lengends
+      .html("")
+      .style("display", "grid")
+      .selectAll()
+      .data([...unique])
+      .join("div")
+      .classed("box", true)
+      .on("click", (e, d) => {
+        if (selectList.has(d)) {
+          d3.select(e.currentTarget).classed("deactive", true);
+          selectList.delete(d);
+          d3.selectAll(`.link.${d}`).classed("deactive", true).lower();
+          lines.each(lines_select);
+        } else {
+          selectList.add(d);
+          d3.select(e.currentTarget).classed("deactive", false);
+          d3.selectAll(`.link.${d}`).each(lines_select);
+          d3.selectAll(`.link:not(.${d})`).lower();
+        }
+      });
+
+    legend
+      .append("div")
+      .classed("rect", true)
+      .style("background", (d) => color(d))
+      .on("mouseover", (e, d) => {
+        // if (d3.select(e.target).classed("deactive")) return;
+        d3.selectAll(`.link.${d}`)
+          .classed("deactive", false)
+          .each(lines_select);
+
+        d3.selectAll(`.link:not(.${d})`).classed("deactive", true).lower();
+
+        // d3.selectAll(`.link.${d}:not(.deactive)`).attr("stroke", color_c(d));
+        // .raise();
+      })
+      .on("mouseout", (e, d) => {
+        if (!selectList.has(d[col_c]))
+          d3.selectAll(`.link.${d}`).classed("deactive", true);
+        lines.each(lines_select);
+      });
+
+    legend.append("text").text((d) => d);
+    d3.select(colorbar).style("display", "none");
   }
   // https://observablehq.com/@d3/circle-dragging-ii
   // https://gist.github.com/jasondavies/1341281

@@ -7,10 +7,10 @@ export default function Colorbar(
     interpolator = d3.interpolateBlues,
     margin = { top: 10, right: 35, bottom: 30, left: 30 },
     update = function () {},
-    pad = 8,
+    pad = 10,
     rotate = -35,
     ticks = 4,
-    titles = ["title"],
+    titles = null,
     titleSize = 16,
     fontSize = 11,
     flag = false,
@@ -60,7 +60,7 @@ export default function Colorbar(
     .append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-  function updateColorScale(extent, interpolator) {
+  function updateColorScale(extent, interpolator, value) {
     y.domain(extent);
     t.range(extent);
     tickValues = new Array(ticks).fill(0).map((_, i) => Math.round(t(i)));
@@ -74,6 +74,9 @@ export default function Colorbar(
       rects.style("fill", (d) =>
         color(vertical ? main - d / delta : d / delta)
       );
+    }
+    if (value) {
+      title.text(value);
     }
   }
   // const options = select
@@ -98,7 +101,7 @@ export default function Colorbar(
   let t = d3.scaleLinear([0, ticks - 1], extent);
   let tickValues = new Array(ticks).fill(0).map((_, i) => t(i));
 
-  let axis;
+  let axis, title;
   if (vertical) {
     axis = g
       .append("g")
@@ -143,9 +146,19 @@ export default function Colorbar(
       // `translate(0, 0)`)
     }
 
-    // title
-    //     .attr("text-anchor", "start")
-    //     .attr("transform", (d, i) => `translate(${0}, ${-pad})`)
+    if (titles) {
+      title = g
+        .append("text")
+        .text(titles[0])
+        .attr("font-weight", "bold")
+        .style("text-transform", "capitalize")
+        .attr("font-size", titleSize)
+        .attr("fill", "#fff");
+      title
+        .attr("text-anchor", "start")
+        .attr("transform", (d, i) => `translate(${0}, ${-pad})`);
+      console.log(title);
+    }
   }
 
   return [colorbar_container.node(), updateColorScale];

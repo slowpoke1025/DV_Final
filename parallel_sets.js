@@ -178,7 +178,7 @@ export function Parallel_Sets(main, data) {
     .attr("stroke-width", (d) => d.width)
     .style("mix-blend-mode", "multiply")
     .attr("class", (d) => ` link ${d.names.join("_")}`)
-    .on("mouseover", (e, d) => {
+    .on("mouseenter", (e, d) => {
       link.classed("deactive", true);
       upstream(d, true);
       d3.select(e.target).classed("deactive", false);
@@ -186,8 +186,8 @@ export function Parallel_Sets(main, data) {
 
       tooltip
         .classed("active", true)
-        .style("left", `${e.pageX - _x + 10}px`)
-        .style("top", `${e.pageY - _y + 10}px`)
+        .style("left", `${e.pageX + 10}px`)
+        .style("top", `${e.pageY + 10}px`)
         .html(
           `<text>${d.names.join(
             "<span class='arrow'> → </span> "
@@ -200,12 +200,13 @@ export function Parallel_Sets(main, data) {
       downstream(d, false);
       upstream(d, false);
       link.classed("deactive", false);
+      tooltip.classed("active", false);
     });
 
-  const titles = link
-    // .attr("class", (d) => " ".join(d.names))
-    .append("title")
-    .text((d) => `${d.names.join(" → ")}\n${d.value.toLocaleString()}`);
+  // const titles = link
+  //   // .attr("class", (d) => " ".join(d.names))
+  //   .append("title")
+  //   .text((d) => `${d.names.join(" → ")}\n${d.value.toLocaleString()}`);
 
   const values = g
     .append("g")
@@ -374,18 +375,31 @@ export function Parallel_Sets(main, data) {
         upstream(d, true);
         d3.select(e.target).classed("deactive", false);
         downstream(d, true);
+
+        tooltip
+          .classed("active", true)
+          .style("left", `${e.pageX + 10}px`)
+          .style("top", `${e.pageY + 10}px`)
+          .html(
+            `<text>${d.names.join(
+              "<span class='arrow'> → </span> "
+            )} <span class='total' style="color:${color(
+              d.names[0]
+            )};">&nbsp;${d.value.toLocaleString()}</span></text>`
+          );
       })
       .on("mouseout", (e, d) => {
         downstream(d, false);
         upstream(d, false);
         link.classed("deactive", false);
+        tooltip.classed("active", false);
       });
 
     // .selectAll("title")
     // .text((d) => `${d.names.join(" → ")}\n${d.value.toLocaleString()}`);
-    titles
-      .data(links)
-      .text((d) => `${d.names.join(" → ")}\n${d.value.toLocaleString()}`);
+    // titles
+    //   .data(links)
+    //   .text((d) => `${d.names.join(" → ")}\n${d.value.toLocaleString()}`);
 
     node
       .data(nodes)

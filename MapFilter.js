@@ -96,7 +96,7 @@ export function MapFilter(
     {
       vertical: false,
       rotate: 0,
-      titles: dimensions,
+      // titles: dimensions,
       update,
       dark: true,
     }

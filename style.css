@@ -5,7 +5,9 @@
     user-select: none;
 }
 
-:root {}
+:root {
+    --RADIUS: 8px;
+}
 
 body {
     height: 100dvh;
@@ -13,7 +15,7 @@ body {
     padding: 2rem;
     background-color: #2e2e2e;
     background-color: hsl(216, 5%, 21%);
-
+    width: 100vw;
 }
 
 #myTab {
@@ -42,22 +44,22 @@ body {
 .mycontainer {
     display: grid;
     height: 100%;
+    width: 100%;
     grid-template-areas:
         "states main brand-filter"
         "states main color-filter";
     grid-template-columns: 1fr 2fr 1fr;
     grid-template-rows: 1fr 1fr;
     gap: 1rem;
-    max-width: 100%;
+    position: relative;
 }
 
 .mycontainer>div {
     /* border: 3px solid rgb(0, 0, 0); */
-    border-radius: 8px;
+    border-radius: var(--RADIUS);
     box-shadow: 0 0 5px #f1eeee;
     /* overflow: hidden; */
     background-color: #84848420;
-
 
 }
 
@@ -65,16 +67,22 @@ body {
     grid-area: main;
     display: flex;
     flex-direction: column;
+    /* overflow: hidden; */
+    overflow-y: hidden;
+    overflow-x: auto;
+
+
 }
 
 .main-container {
     /* flex: 1; */
     height: 100%;
 
+
 }
 
 .tab-pane {
-    height: 100%
+    height: 100%;
 }
 
 .left {
@@ -82,12 +90,15 @@ body {
     display: flex;
     flex-direction: column;
     position: relative;
+
+
 }
 
 .map-container {
     /* flex: 5; */
     height: 100%;
     position: relative;
+
 }
 
 .map-container svg {}
@@ -102,10 +113,13 @@ body {
     /* position: relative; */
     padding: 0rem 0 1rem 0rem;
     background-color: var(--bs-dark);
-
+    border-radius: var(--RADIUS);
 }
 
-
+.navbar,
+.nav {
+    border-radius: var(--RADIUS) var(--RADIUS) 0 0;
+}
 
 .colorbar {
     /* width: 100%; */
@@ -244,9 +258,6 @@ label {
     background-color: #f3bc00;
 }
 
-.line.deactive {
-    stroke: #dddddddd;
-}
 
 
 /**/
@@ -254,23 +265,25 @@ label {
     display: flex;
     flex-direction: column;
     height: 100%;
+
 }
 
 .pc-control {
-    flex: 1;
+    flex: 2;
     background-color: var(--bs-dark);
+    padding: 20px 20px 1rem 20px;
+    display: flex;
+    flex-direction: column;
+    /* gap: .4rem; */
+    justify-content: space-between;
 }
 
-.pc-control {
-    padding: 20px;
-}
 
 .pc-container {
-    flex: 9;
+    flex: 11;
     background-color: #ffffff;
-
-
 }
+
 
 
 #parallel_sets {
@@ -282,17 +295,17 @@ label {
 .ps-control {
     flex: 1;
     background-color: #ffffff11;
-    padding: 20px;
 }
 
 .ps-container {
     flex: 9;
     background-color: #ffffff;
-    position: relative;
+    /* position: relative; */
 }
 
-.link.deactive {
-    stroke: #dfd9d979;
+.link.deactive,
+.link.deselected {
+    stroke: #dfd9d961;
 }
 
 .map_tooltip {
@@ -353,11 +366,10 @@ li.sum::marker {
     display: none;
     box-shadow: 0 0 3px #333;
     width: max-content;
-    padding: .3rem .5rem;
     border-radius: 8px;
     color: #fff;
     left: 0;
-    right: 0;
+    top: 0;
 }
 
 .ps_tooltip.active {
@@ -377,6 +389,82 @@ li.sum::marker {
 .ps_tooltip .total {
     font-weight: bolder;
     font-size: 17px;
+}
+
+.switch {
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* flex: 0; */
+    padding-left: 0;
+}
+
+.btn-group>* {
+    vertical-align: middle;
+}
+
+.color-legend {
+    display: none;
+    grid-auto-flow: column;
+    grid-template-columns: repeat(auto-fit, minmax(0, fit-content));
+    /* grid-template-rows: 1fr, 1fr; */
+    gap: 1rem;
+    overflow-y: hidden;
+    /* overflow-y: auto; */
 
 
+
+    flex: 1;
+    place-items: center;
+}
+
+/* .color-legend {
+    display: none;
+    grid-auto-flow: column;
+    grid-auto-columns: fit-content;
+    width: 100%;
+    gap: 1rem;
+    overflow-y: hidden;
+    overflow-x: auto;
+} */
+.box {
+    color: #fff;
+    display: flex;
+    gap: .3rem;
+    align-items: center;
+    padding-bottom: .5rem;
+}
+
+.box.deactive .rect {
+    border: none;
+    background-color: rgba(160, 160, 160, 0.851) !important;
+}
+
+.rect {
+    aspect-ratio: 1/1;
+    height: 1rem;
+    border-radius: 50%;
+    border: 2.5px solid #ffffff;
+}
+
+
+::-webkit-scrollbar {
+    height: .5rem;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #14b05000;
+}
+
+/* Handle */
+.color-legend::-webkit-scrollbar-thumb {
+    background: #ffffff89;
+    border-radius: 1rem;
+}
+
+/* Handle on hover */
+.color-legend::-webkit-scrollbar-thumb:hover {
+    background: #ffffffb3;
 }
