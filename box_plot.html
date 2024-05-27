@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Box Plot with D3.js</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <style>
+        /* Add your CSS styling here */
+        .box {
+            stroke: #000000;
+            fill: #ffffff;
+        }
+        .outlier {
+            fill: #ff0000;
+            stroke: #000000;
+        }
+        .axis {
+            font-size: 12px;
+        }
+        .label {
+            font-size: 14px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <label for="make-filter">Filter by Make:</label>
+        <select id="make-filter">
+            <option value="All">All</option>
+            <!-- Options will be populated by D3.js -->
+        </select>
+
+        <label for="state-filter">Filter by State:</label>
+        <div id="state-filter">
+            <!-- Checkboxes will be populated by D3.js -->
+        </div>
+    </div>
+
+    <svg width="960" height="600"></svg>
+
+    <script src="boxplot.js"></script>
+</body>
+</html>
