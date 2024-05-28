@@ -1,0 +1,25 @@
+.bubble {
+    /* fill: steelblue; */
+    stroke: #fff;
+    opacity: 0.8;
+    stroke-width: 2.5px;
+}
+
+.bubble:hover {
+    /* fill: steelblue; */
+    filter: brightness(1.5);
+}
+
+.brand-label {
+    font-size: 12px;
+    text-anchor: middle;
+    fill: #000000;
+}
+
+.bubble.selected {
+    opacity: 0.9;
+}
+
+.bubble:not(.selected) {
+    fill: rgba(144, 144, 144, 0.5) !important;
+}

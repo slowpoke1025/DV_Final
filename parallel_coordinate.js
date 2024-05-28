@@ -33,6 +33,7 @@ export function Parallel_coordinate(main, data) {
       linear_flag = false;
       lines
         // .attr("stroke", (d) => color_c(d[col_c]))
+
         .attr("class", (d) => `link ${d[col_c]}`)
         .each(lines_select)
 
@@ -63,8 +64,14 @@ export function Parallel_coordinate(main, data) {
           lines.each(lines_select);
         });
       d3.select(colorbar).style("display", "none");
+
+      resetBtn.disabled = false;
     } else {
       linear_flag = true;
+      selectList = new Set(_unique);
+      d3.selectAll(".box").classed("deactive", false);
+      allBtn.disabled = true;
+      resetBtn.disabled = true;
       lines
         // .attr("stroke", (d) => color(d[dimensions[0]])) //"#69b3a2"
         .attr("class", (d) => `link`)
@@ -74,6 +81,24 @@ export function Parallel_coordinate(main, data) {
       d3.select(".color-legend").style("display", "none");
       d3.select(colorbar).style("display", "block");
     }
+  });
+  const resetBtn = document.getElementById("pc-reset");
+  const allBtn = document.getElementById("pc-all");
+
+  resetBtn.addEventListener("click", (e) => {
+    d3.selectAll(".box").classed("deactive", true);
+    lines.classed("deactive", true).lower();
+    selectList.clear();
+    e.target.disabled = true;
+    allBtn.disabled = false;
+  });
+
+  allBtn.addEventListener("click", (e) => {
+    d3.selectAll(".box").classed("deactive", false);
+    selectList = new Set(_unique);
+    e.target.disabled = true;
+    resetBtn.disabled = false;
+    lines.each(lines_select);
   });
 
   let target = dimensions[0];
@@ -102,7 +127,7 @@ export function Parallel_coordinate(main, data) {
       update,
       ticks: 6,
       titles: dimensions,
-      margin: { left: 30, top: 25, right: 80, bottom: 40 },
+      margin: { left: 30, top: 30, right: 80, bottom: 40 },
     }
   );
 
@@ -306,6 +331,7 @@ export function Parallel_coordinate(main, data) {
   }
 
   const lengends = d3.select(".color-legend");
+  let _unique;
   function updateColor(color, col, unique) {
     color_c = color;
     col_c = col;
@@ -313,6 +339,8 @@ export function Parallel_coordinate(main, data) {
     check.checked = true;
     linear_flag = false;
     selectList = new Set(unique);
+    _unique = unique;
+    resetBtn.disabled = false;
 
     lines
       .attr("class", (d) => `link ${d[col_c]}`)
@@ -351,6 +379,15 @@ export function Parallel_coordinate(main, data) {
           d3.select(e.currentTarget).classed("deactive", false);
           d3.selectAll(`.link.${d}`).each(lines_select);
           d3.selectAll(`.link:not(.${d})`).lower();
+          lines.each(lines_select);
+        }
+        if (selectList.size == _unique.size) {
+          allBtn.disabled = true;
+        } else if (selectList.size == 0) {
+          resetBtn.disabled = true;
+        } else {
+          allBtn.disabled = false;
+          resetBtn.disabled = false;
         }
       });
 

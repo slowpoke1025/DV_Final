@@ -4,6 +4,7 @@
 import { MapFilter } from "./MapFilter.js";
 import { Parallel_coordinate } from "./parallel_coordinate.js";
 import { Parallel_Sets } from "./parallel_sets.js";
+import { BubbleFilter } from "./bubble_test.js";
 
 const LOADED = {};
 d3.csv("./dataset/car_prices_cleaned.csv").then(async (data) => {
@@ -37,7 +38,8 @@ d3.csv("./dataset/car_prices_cleaned.csv").then(async (data) => {
     function () {
       const _data = data.filter((d) => getStates().has(d.state));
       console.log(getStates());
-      updateMap(_data);
+      // updateMap(_data);
+      updateBrands(_data);
     }
   );
 
@@ -57,4 +59,15 @@ d3.csv("./dataset/car_prices_cleaned.csv").then(async (data) => {
       updateColor_PC(color, value, unique);
     });
   });
+
+  const bubble_container = d3.select(".brand-container");
+  const { getBrands, updateBrands } = BubbleFilter(
+    bubble_container,
+    data,
+    () => {
+      const _data = data.filter((d) => getBrands().has(d.make));
+      updateMap(_data);
+      // updateBrands(_data);
+    }
+  );
 });

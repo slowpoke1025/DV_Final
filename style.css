@@ -90,8 +90,6 @@ body {
     display: flex;
     flex-direction: column;
     position: relative;
-
-
 }
 
 .map-container {
@@ -155,8 +153,7 @@ body {
 .state {
     stroke-width: 1px;
     stroke: #000;
-    /* fill: antiquewhite; */
-
+    opacity: 0.2;
     transition: transform 0.5s;
 }
 
@@ -339,7 +336,6 @@ label {
     margin: 0;
     padding: .3rem;
     border-bottom: 3px solid #f3bc00;
-
 }
 
 
@@ -353,6 +349,10 @@ li.mean::marker {
 
 li.sum::marker {
     color: #d32929;
+}
+
+li.median::marker {
+    color: #d03ea2;
 }
 
 .highlight {
@@ -391,11 +391,15 @@ li.sum::marker {
     font-size: 17px;
 }
 
+.link {
+    /* transition: stroke .5s; */
+}
+
 .switch {
     margin: 0;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: start;
     /* flex: 0; */
     padding-left: 0;
 }
@@ -467,4 +471,57 @@ li.sum::marker {
 /* Handle on hover */
 .color-legend::-webkit-scrollbar-thumb:hover {
     background: #ffffffb3;
+}
+
+
+
+
+.brand_tooltip {
+    position: absolute;
+    background-color: #000000a9;
+    font-size: 16px;
+    display: none;
+    box-shadow: 0 0 3px #333;
+    width: max-content;
+    padding: .3rem .5rem;
+    border-radius: 8px;
+    color: #fff;
+    left: 0;
+    right: 0;
+    z-index: 99;
+}
+
+.brand_tooltip.active {
+    display: block;
+}
+
+.brand_tooltip ul {
+    margin: 0;
+    padding: .5rem;
+    padding-left: 1.7rem;
+    list-style: disc;
+}
+
+
+.brand_tooltip>.brand-name {
+    margin: 0;
+    padding: .3rem;
+    border-bottom: 3px solid #f3bc00;
+}
+
+.right-bottom {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-container {
+    height: 100%;
+    position: relative;
+}
+
+
+.brand-control {
+    align-items: center;
+    background-color: var(--bs-dark);
+    border-radius: var(--RADIUS);
 }

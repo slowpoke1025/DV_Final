@@ -1,5 +1,5 @@
 import Colorbar from "./colorbar.js";
-
+import { calculateMedian } from "./lib/median.js";
 export function MapFilter(
   container,
   controlContainer,
@@ -18,70 +18,78 @@ export function MapFilter(
     "sellingprice_size",
     "sellingprice_mean",
     "sellingprice_sum",
+    "sellingprice_median",
   ]; //data.columns.filter((d) => d !== "state");
   //   return d3
   //     .csv("./dataset/car_prices_cleaned.csv")
   //     .then((data) => {
   const interpolaters = {
-    sellingprice_size: d3.interpolateBlues,
+    sellingprice_size: d3.interpolateGnBu,
     sellingprice_mean: d3.interpolateGreens,
     sellingprice_sum: d3.interpolateReds,
+    sellingprice_median: d3.interpolateRdPu,
   };
   // states_list.clear();
   data.forEach((d) => states_list.add(d.state));
   selected_states = new Set(states_list);
 
   function setUp(data) {
-    obj = {};
-    states_list.forEach((s) => {
-      obj[s] = dimensions.reduce((acum, d) => ({ ...acum, [d]: 0 }), {});
-    });
+    // obj = {};
+    // states_list.forEach((s) => {
+    //   obj[s] = dimensions.reduce((acum, d) => ({ ...acum, [d]: 0 }), {});
+    // });
 
-    data.forEach((d) => {
-      ++obj[d.state]["sellingprice_size"];
-      obj[d.state]["sellingprice_sum"] += +d.sellingprice;
-    });
+    // data.forEach((d) => {
+    //   ++obj[d.state]["sellingprice_size"];
+    //   obj[d.state]["sellingprice_sum"] += +d.sellingprice;
+    // });
 
-    Object.keys(obj).forEach((k) => {
-      if (obj[k]["sellingprice_size"] == 0) return;
-      obj[k]["sellingprice_mean"] =
-        obj[k]["sellingprice_sum"] / obj[k]["sellingprice_size"];
-    });
+    // Object.keys(obj).forEach((k) => {
+    //   if (obj[k]["sellingprice_size"] == 0) return;
+    //   obj[k]["sellingprice_mean"] =
+    //     obj[k]["sellingprice_sum"] / obj[k]["sellingprice_size"];
+    // });
 
-    //   dimensions.forEach((col) => {
-    //     extents[col] = d3.extent(data, (d) => +d[col]);
-    //     colors[col] = d3.scaleSequential(extents[col], d3.interpolateBlues);
-    //   });
-
-    dimensions.forEach((col) => {
-      extents[col] = d3.extent(Object.values(obj), (d) => +d[col]);
-      colors[col] = d3.scaleSequential(extents[col], interpolaters[col]);
-    });
+    obj = d3.rollup(
+      data,
+      (v) => ({
+        sellingprice_size: v.length,
+        sellingprice_mean:
+          v.reduce(function (total, i) {
+            return total + +i.sellingprice;
+          }, 0) / v.length,
+        sellingprice_sum: v.reduce(function (total, i) {
+          return total + +i.sellingprice;
+        }, 0),
+        sellingprice_median: calculateMedian(v.map((d) => +d.sellingprice)),
+      }),
+      (d) => d.state
+    );
+    if (data.length > 0) {
+      dimensions.forEach((col) => {
+        extents[col] = d3.extent(obj.values(), (d) => +d[col]);
+        colors[col] = d3.scaleSequential(extents[col], interpolaters[col]);
+      });
+    } else {
+      dimensions.forEach((col) => {
+        extents[col] = [0, 0];
+        colors[col] = d3.scaleSequential(extents[col], interpolaters[col]);
+      });
+    }
 
     //   data.forEach((d) => {
     //     const { state, ...v } = d;
     //     obj[state] = v;
     //   });
-    //   console.log(obj);
   }
 
   function update(col) {
     target = col;
     states.transition().attr("fill", (d) => {
-      return obj[d.properties.name]
-        ? colors[col](+obj[d.properties.name][col])
+      return obj.get(d.properties.name)
+        ? colors[col](+obj.get(d.properties.name)[col])
         : "lightgray";
     });
-    states
-      .selectAll("title")
-      .text(
-        (d) =>
-          d.properties["name"] +
-          " " +
-          (obj[d.properties["name"]]
-            ? Math.round(obj[d.properties["name"]][target])
-            : 0)
-      );
 
     return extents[col];
   }
@@ -128,7 +136,7 @@ export function MapFilter(
 
   allBtn.addEventListener("click", (e) => {
     states.classed("active", true);
-    selected_states = new Set(Object.keys(obj));
+    selected_states = new Set(obj.keys());
     // for (let i of Object.keys(obj)) selected_states.add(i);
     e.target.disabled = true;
     resetBtn.disabled = false;
@@ -258,7 +266,7 @@ export function MapFilter(
           return (
             acc +
             `<li class="${name} ${col == target ? "highlight" : ""}">${name}: 
-            ${Math.round(obj[d.properties.name]?.[col] ?? 0)}</li>`
+            ${Math.round(obj.get(d.properties.name)?.[col] ?? 0)}</li>`
           );
         }, ``);
 
@@ -277,20 +285,20 @@ export function MapFilter(
 
     states
       .attr("fill", (d) => {
-        return obj[d.properties.name]
-          ? colors[target](+obj[d.properties.name][target])
+        return obj.get(d.properties.name)
+          ? colors[target](+obj.get(d.properties.name)[target])
           : "lightgray";
       })
-      .attr("opacity", 0.5)
-      .classed("invalid", (d) => obj[d.properties.name] == null)
+      .classed("invalid", (d) => obj.get(d.properties.name) == null)
       .on("click", function (e, d) {
         const name = d.properties.name;
-        // if (obj[name] == null) return;
+        // if (obj.get(name) == null) return;
+        if (d3.select(e.currentTarget).classed("invalid")) return;
+
         if (!selected_states.has(name)) selected_states.add(name);
         else selected_states.delete(name);
 
         d3.select(this).classed("active", selected_states.has(name));
-        console.log(selected_states.size, states_list.size);
         if (selected_states.size == states_list.size) {
           allBtn.disabled = true;
         } else if (selected_states.size == 0) {
@@ -302,23 +310,6 @@ export function MapFilter(
 
         updateDashboard();
       });
-
-    states
-      .append("title")
-      .text(
-        (d) =>
-          d.properties["name"] +
-          " " +
-          (obj[d.properties["name"]]
-            ? Math.round(obj[d.properties["name"]][target])
-            : 0)
-      );
-    const tooltipTriggerList = document.querySelectorAll(
-      '[data-bs-toggle="tooltip"]'
-    );
-    const tooltipList = [...tooltipTriggerList].map(
-      (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)
-    );
 
     function boxZoom(box, centroid, padd) {
       let [minXY, maxXY] = box; // [x0, y0], [x1, y1]
@@ -367,8 +358,6 @@ export function MapFilter(
       setUp(data);
       update(target);
       updateColorBar(extents[target], interpolaters[target]);
-
-      console.log("555");
     }
 
     return { getStates, updateMap }; //svgg.node();

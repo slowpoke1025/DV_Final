@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Sales Bubble Chart</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <style>
+        .bubble {
+            fill: steelblue;
+            stroke: #fff;
+            opacity: 0.8;
+            stroke-width: 2.5px;
+        }
+
+        .bubble:hover {
+            filter: brightness(1.5);
+        }
+
+        .brand-label {
+            font-size: 12px;
+            text-anchor: middle;
+            fill: #000000;
+        }
+
+        .tooltip {
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ccc;
+            pointer-events: none;
+            display: none;
+            padding: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart {
+            width: 400px;
+            height: 200px;
+        }
+
+        .line {
+            fill: none;
+            stroke: steelblue;
+            stroke-width: 2px;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+
+        .axis text {
+            font-size: 12px;
+        }
+
+        .main {
+            box-shadow: 0 0 3px #333;
+            width: 500px;
+            height: 500px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main"></div>
+    <div class="tooltip" id="tooltip">
+        <div class="chart"></div>
+    </div>
+    <script type="module" src="bubble.js"></script>
+</body>
+
+</html>

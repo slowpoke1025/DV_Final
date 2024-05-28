@@ -9,14 +9,19 @@
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="bubble.css">
+
     <script src="./lib/d3@6.js"></script>
     <script src="./lib/topojson.js"></script>
     <script src="./lib/d3-sankey@0.js"></script>
-    <script src="https://unpkg.com/d3-sankey@0"></script>
+    <script src="./lib/median.js" type="module"></script>
+
+    <!-- <script src="https://unpkg.com/d3-sankey@0"></script> -->
     <script defer src="parallel_coordinate.js" type="module"></script>
     <script defer src="parallel_sets.js" type="module"></script>
     <script defer src="MapFilter.js" type="module"></script>
     <script defer src="colorbar.js" type="module"></script>
+    <script defer src="bubble_test.js" type="module"></script>
     <script defer src="script.js" type="module"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
@@ -53,6 +58,8 @@
                                                 data-state-color="sellingprice_mean">sellingprice_mean</button></li>
                                         <li><button class="dropdown-item" type="button"
                                                 data-state-color="sellingprice_sum">sellingprice_sum</button></li>
+                                        <li><button class="dropdown-item" type="button"
+                                                data-state-color="sellingprice_median">sellingprice_median</button></li>
 
                                     </ul>
                                 </li>
@@ -120,12 +127,14 @@
                                     <button type="button" class="btn btn-sm btn-outline-warning mx-2" id="pc-all"
                                         disabled>ALL</button>
 
-                                    <button type="button" class="btn btn-sm btn-outline-danger"
-                                        id="pc-reset">RESET</button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" id="pc-reset"
+                                        disabled>RESET</button>
                                 </div>
-                                <label class="form-check-label" for="flexSwitchCheckDefault">
-                                    <input class="form-check-input mb-3" type="checkbox" role="switch"
-                                        id="pc-color-switch">Categorical Color Encode</label>
+                                <div>
+                                    <label class="form-check-label" for="flexSwitchCheckDefault">
+                                        <input class="form-check-input mb-3" type="checkbox" role="switch"
+                                            id="pc-color-switch">Categorical Color Encode</label>
+                                </div>
                             </div>
                             <div class="color-legend">
                                 <!-- <div class="box"><div class="rect"></div>AAA</div>
@@ -204,7 +213,60 @@
         </div>
         <div class="right-bottom">
 
+            <div class="brand-control">
+                <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                    <div class="container-fluid">
+                        <span class="navbar-brand">Bubble Size</span>
 
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+
+                        <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
+                            <ul class="navbar-nav">
+                                <li class="nav-item dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle btn-md" type="button"
+                                        id="dropdownBrandBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Counts
+                                    </button>
+
+                                    <ul class="dropdown-menu dropdown-menu-dark">
+                                        <li><button class="dropdown-item" type="button"
+                                                data-brand-color="sellingprice_size">sellingprice_size</button></li>
+                                        <li><button class="dropdown-item" type="button"
+                                                data-brand-color="sellingprice_mean">sellingprice_mean</button></li>
+                                        <li><button class="dropdown-item" type="button"
+                                                data-brand-color="sellingprice_sum">sellingprice_sum</button></li>
+                                        <li><button class="dropdown-item" type="button"
+                                                data-brand-color="sellingprice_median">sellingprice_median</button></li>
+
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- <label class="form-check-label" for="flexCheckDefault">
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"> ALL
+                        </label> -->
+                        <button type="button" class="btn btn-sm btn-outline-warning mx-2" id="brand-all"
+                            disabled>ALL</button>
+
+                        <button type="button" class="btn btn-sm btn-outline-danger" id="brand-reset">RESET</button>
+                    </div>
+                </nav>
+            </div>
+            <div class="brand-container">
+                <div class="brand_tooltip">
+                    <h5 class="brand-name"></h5>
+                    <ul class="">
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                    </ul>
+                </div>
+            </div>
         </div>
 
     </div>
