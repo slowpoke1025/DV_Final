@@ -27,7 +27,7 @@ export function MapFilter(
     sellingprice_size: d3.interpolateGnBu,
     sellingprice_mean: d3.interpolateGreens,
     sellingprice_sum: d3.interpolateReds,
-    sellingprice_median: d3.interpolateRdPu,
+    sellingprice_median: d3.interpolateBlues,
   };
   // states_list.clear();
   data.forEach((d) => states_list.add(d.state));
@@ -131,7 +131,7 @@ export function MapFilter(
     e.target.disabled = true;
     allBtn.disabled = false;
 
-    updateDashboard();
+    updateDashboard("RESET");
   });
 
   allBtn.addEventListener("click", (e) => {
@@ -266,7 +266,9 @@ export function MapFilter(
           return (
             acc +
             `<li class="${name} ${col == target ? "highlight" : ""}">${name}: 
-            ${Math.round(obj.get(d.properties.name)?.[col] ?? 0)}</li>`
+            ${Math.round(
+              obj.get(d.properties.name)?.[col] ?? 0
+            ).toLocaleString()}</li>`
           );
         }, ``);
 

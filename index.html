@@ -10,6 +10,14 @@
 
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="bubble.css">
+    <link rel="stylesheet" href="scatter.css">
+    <link rel="stylesheet" href="bar.css">
+    <link rel="stylesheet" href="box.css">
+    <link rel="stylesheet" href="radar.css">
+
+
+
+
 
     <script src="./lib/d3@6.js"></script>
     <script src="./lib/topojson.js"></script>
@@ -22,6 +30,14 @@
     <script defer src="MapFilter.js" type="module"></script>
     <script defer src="colorbar.js" type="module"></script>
     <script defer src="bubble_test.js" type="module"></script>
+    <script defer src="scatter_test.js" type="module"></script>
+    <script defer src="bar_test.js" type="module"></script>
+    <script defer src="box_test.js" type="module"></script>
+    <script defer src="radar_test.js" type="module"></script>
+
+
+
+
     <script defer src="script.js" type="module"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
@@ -48,7 +64,7 @@
                                 <li class="nav-item dropdown">
                                     <button class="btn btn-secondary dropdown-toggle btn-md" type="button"
                                         id="dropdownColorStateBtn" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Select
+                                        size
                                     </button>
 
                                     <ul class="dropdown-menu dropdown-menu-dark">
@@ -111,7 +127,7 @@
                         role="tab">Radar</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="radar-tab" data-bs-toggle="tab" data-bs-target="#box" type="button"
+                    <button class="nav-link" id="box-tab" data-bs-toggle="tab" data-bs-target="#box" type="button"
                         role="tab">Box</button>
                 </li>
 
@@ -121,23 +137,25 @@
                 <div class="tab-pane fade show active parallel_coordinate" id="pc-container" role="tabpanel">
                     <div id="parallel_coordinate">
                         <div class="pc-control">
+                            <div class="linear-bar">
 
+                            </div>
                             <div class="form-check form-switch switch">
-                                <div class="btn-group">
+                                <!-- <div class="btn-group">
                                     <button type="button" class="btn btn-sm btn-outline-warning mx-2" id="pc-all"
                                         disabled>ALL</button>
 
                                     <button type="button" class="btn btn-sm btn-outline-danger" id="pc-reset"
                                         disabled>RESET</button>
-                                </div>
-                                <div>
-                                    <label class="form-check-label" for="flexSwitchCheckDefault">
-                                        <input class="form-check-input mb-3" type="checkbox" role="switch"
-                                            id="pc-color-switch">Categorical Color Encode</label>
-                                </div>
+                                </div> -->
+
+                                <label class="form-check-label" for="flexSwitchCheckDefault">
+                                    <input class="form-check-input mb-3" type="checkbox" role="switch"
+                                        id="pc-color-switch">Categorical Color Encode</label>
+
                             </div>
-                            <div class="color-legend">
-                                <!-- <div class="box"><div class="rect"></div>AAA</div>
+                            <!-- <div class="color-legend"> -->
+                            <!-- <div class="box"><div class="rect"></div>AAA</div>
                                     <div class="box"></div>
                                     <div class="box"></div>
                                     <div class="box"></div>
@@ -145,7 +163,7 @@
                                     <div class="box"></div>
                                     <div class="box"></div>
                                     <div class="box"></div> -->
-                            </div>
+                            <!-- </div> -->
 
                         </div>
                         <div class="pc-container"></div>
@@ -154,16 +172,158 @@
                 </div>
                 <div class="tab-pane fade" role="tabpanel" id="ps-container">
                     <div id="parallel_sets">
-                        <div class="ps-control"></div>
+                        <!-- <div class="ps-control"></div> -->
                         <div class="ps-container">
 
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane fade" id="bar" role="tabpanel" aria-labelledby="bar-tab">BAR...</div>
-                <div class="tab-pane fade" id="scatter" role="tabpanel" aria-labelledby="scatter-tab">SCATTER</div>
-                <div class="tab-pane fade" id="radar" role="tabpanel" aria-labelledby="radar-tab">RADAR</div>
-                <div class="tab-pane fade" id="box" role="tabpanel" aria-labelledby="box-tab">BOX</div>
+                <div class="tab-pane fade" id="bar" role="tabpanel" aria-labelledby="bar-tab">
+                    <div id="bar-plot">
+                        <div class="bar-control"></div>
+                        <div class="bar-container">
+                            <div class="bar_tooltip">
+                                <h5 class="bar-name"></h5>
+                                <ul class="">
+                                    <li></li>
+                                    <li></li>
+                                    <li></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="scatter" role="tabpanel" aria-labelledby="scatter-tab">
+                    <div id="scatter-plot">
+                        <div class="scatter-control">
+                            <!-- <label for="x-axis-select">X Axis:</label>
+                            <select id="x-axis-select">
+                                <option value="mmr">MMR</option>
+                                <option value="year">Year</option>
+                                <option value="sellingprice">Selling price</option>
+                                <option value="odometer">odometer</option>
+                                <option value="sp-mmr">SP-MMR</option>
+                                <option value="condition">condition</option>
+                                <option value="age">age</option>
+                            </select>
+                            <label for="y-axis-select">Y Axis:</label>
+                            <select id="y-axis-select">
+                                <option value="sellingprice">Selling price</option>
+                                <option value="mmr">MMR</option>
+                                <option value="year">Year</option>
+                                <option value="odometer">odometer</option>
+                                <option value="sp-mmr">SP-MMR</option>
+                                <option value="condition">condition</option>
+                                <option value="age">age</option>
+                            </select> -->
+
+                            <div class="axis-btn-group">
+                                <div class="dropdown">
+                                    <span class="" href="#">X-Axis : </span>
+                                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button"
+                                        id="dropdownScatterXBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                                        X-Axis
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-dark">
+                                        <li><button class="dropdown-item" type="button" data-xaxis="mmr">Mmr</button>
+                                        </li>
+                                        <li><button class="dropdown-item" type="button"
+                                                data-xaxis="sellingprice">Sellingprice</button></li>
+                                        <li><button class="dropdown-item" type="button" data-xaxis="year">Year</button>
+                                        </li>
+                                        <li><button class="dropdown-item" type="button"
+                                                data-xaxis="odometer">Odometer</button>
+                                        </li>
+                                        <li><button class="dropdown-item" type="button"
+                                                data-xaxis="sp-mmr">Sp-mmr</button>
+                                        </li>
+                                        <li><button class="dropdown-item" type="button"
+                                                data-xaxis="condition">Condition</button></li>
+                                        <li><button class="dropdown-item" type="button" data-xaxis="age">Age</button>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="dropdown">
+                                    <span class="" href="#">Y-Axis : </span>
+                                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button"
+                                        id="dropdownScatterYBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Y-Axis
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-dark">
+                                        <li><button class="dropdown-item" type="button" data-yaxis="mmr">Mmr</button>
+                                        </li>
+                                        <li><button class="dropdown-item" type="button"
+                                                data-yaxis="sellingprice">Sellingprice</button></li>
+                                        <li><button class="dropdown-item" type="button" data-yaxis="year">Year</button>
+                                        </li>
+                                        <li><button class="dropdown-item" type="button"
+                                                data-yaxis="odometer">Odometer</button>
+                                        </li>
+                                        <li><button class="dropdown-item" type="button"
+                                                data-yaxis="sp-mmr">Sp-mmr</button>
+                                        </li>
+                                        <li><button class="dropdown-item" type="button"
+                                                data-yaxis="condition">Condition</button></li>
+                                        <li><button class="dropdown-item" type="button" data-yaxis="age">Age</button>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="scatter-container">
+                            <div class="sc_tooltip">
+                                <h5 class="sc-name"></h5>
+                                <ul class="">
+                                    <li></li>
+                                    <li></li>
+                                    <li></li>
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="radar" role="tabpanel" aria-labelledby="radar-tab">
+                    <div id="radar-plot">
+                        <div class="radar-control">
+                            <label for="make">Make:</label>
+                            <select id="make" multiple size="10"></select>
+                        </div>
+                        <div class="radar-container">
+                            <div id="legend"></div>
+                            <div id="chart"></div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="tab-pane fade" id="box" role="tabpanel" aria-labelledby="box-tab">
+                    <div id="box-plot">
+                        <div class="box-control">
+                            <label for="make-filter">Filter by Make:</label>
+                            <select id="make-filter">
+                                <option value="All">All</option>
+                                <!-- Options will be populated by D3.js -->
+                            </select>
+
+                            <label for="state-filter">Filter by State:</label>
+                            <div id="state-filter">
+                                <!-- Checkboxes will be populated by D3.js -->
+                            </div>
+                        </div>
+                        <div class="box-container">
+                            <div class="box_tooltip">
+                                <h5 class="box-name"></h5>
+                                <ul class="">
+                                    <li></li>
+                                    <li></li>
+                                    <li></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
 
 
             </div>
@@ -208,8 +368,27 @@
                             </li>
                         </ul>
                     </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-outline-warning mx-2" id="pc-all"
+                            disabled>ALL</button>
+
+                        <button type="button" class="btn btn-sm btn-outline-danger" id="pc-reset"
+                            disabled>RESET</button>
+                    </div>
                 </div>
             </nav>
+            <div class="color-legend">
+                <!-- <div class="box"><div class="rect"></div>AAA</div>
+                                    <div class="box"></div>
+                                    <div class="box"></div>
+                                    <div class="box"></div>
+                                    <div class="box"></div>
+                                    <div class="box"></div>
+                                    <div class="box"></div>
+                                    <div class="box"></div> -->
+            </div>
+
+
         </div>
         <div class="right-bottom">
 

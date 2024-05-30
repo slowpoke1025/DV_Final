@@ -1,0 +1,61 @@
+#box-plot {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.box-control {
+    height: 0;
+    background-color: #ffffff11;
+    overflow: auto;
+
+}
+
+.box-container {
+    flex: 9;
+    background-color: #ffffff;
+    position: relative;
+    overflow: auto;
+    height: 100%;
+    position: relative;
+
+}
+
+.box-container .box:hover {
+    fill: #f3bc00;
+}
+
+
+.box_tooltip {
+    position: absolute;
+    background-color: #000000a9;
+    font-size: 16px;
+    display: none;
+    box-shadow: 0 0 3px #333;
+    width: max-content;
+    padding: .3rem .5rem;
+    border-radius: 8px;
+    color: #fff;
+    left: 0;
+    right: 0;
+    z-index: 99;
+}
+
+.box_tooltip.active {
+    display: inline-block;
+    /* transform: translate(-100%, -100%); */
+}
+
+.box_tooltip ul {
+    margin: 0;
+    padding: .5rem;
+    padding-left: 1.7rem;
+    list-style: disc;
+}
+
+
+.box_tooltip>.box-name {
+    margin: 0;
+    padding: .3rem;
+    border-bottom: 3px solid #f3bc00;
+}

@@ -65,39 +65,49 @@ body {
 #color-filter label {
     margin-bottom: 5px;
 }
-body .right-top{
+
+body .right-top {
     background-color: #34495E;
 }
 
 .color-select-label {
     font-size: 2.2em;
-    color:#e6e6e6;
+    color: #e6e6e6;
 }
-.container-for-color:hover{
+
+.container-for-color:hover {
     background-color: #16A085;
-    color:#fff;
+    color: #fff;
 
 }
-.container-for-color.selected{
+
+.container-for-color.selected {
     background-color: #2980B9;
-    color:#fff;
+    color: #fff;
 
 }
-#scatterplot-container{
+
+#scatterplot-container {
     background-color: #2980B9;
 }
+
 .color-select {
-    transform: scale(2.0);  /* Increase checkbox size */
+    transform: scale(2.0);
+    /* Increase checkbox size */
     margin-left: 10px;
-    margin-right: 10px;  /* Add some space between checkbox and label */
+    margin-right: 10px;
+    /* Add some space between checkbox and label */
     font-size: 3.2em;
 }
 
 #all-colors {
-    transform: scale(2.0);  /* Increase checkbox size */
-    margin-left:10px;
-    margin-right: 10px;  /* Add some space between checkbox and label */
+    transform: scale(2.0);
+    /* Increase checkbox size */
+    margin-left: 10px;
+    margin-right: 10px;
+    /* Add some space between checkbox and label */
 }
+
 .map-control {
     /* flex: 1; */
     /* overflow: hidden; */

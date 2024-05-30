@@ -1,0 +1,151 @@
+#color-filter label {
+    margin-bottom: 5px;
+}
+
+.color-select-label {
+    font-size: 1.5rem;
+    color: #e6e6e6;
+}
+
+.container-for-color:hover {
+    background-color: #16A085;
+    color: #fff;
+
+}
+
+.container-for-color.selected {
+    background-color: #2980B9;
+    color: #fff;
+
+}
+
+#scatterplot-container {
+    background-color: #2980B9;
+}
+
+.color-select {
+    transform: scale(2.0);
+    /* Increase checkbox size */
+    margin-left: 10px;
+    margin-right: 10px;
+    /* Add some space between checkbox and label */
+    font-size: 1rem;
+}
+
+#all-colors {
+    transform: scale(2.0);
+    /* Increase checkbox size */
+    margin-left: 10px;
+    margin-right: 10px;
+    /* Add some space between checkbox and label */
+}
+
+#scatter-plot {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.scatter-control {
+    background-color: #ffffff11;
+}
+
+.scatter-container {
+    flex: 1;
+    background-color: #ffffff;
+    position: relative;
+}
+
+.dot {
+    fill: #16a084cb;
+    stroke: #333;
+    stroke-width: 1px;
+    transition: fill .5s, cx .5s, cy .5s;
+}
+
+.dot:hover {
+    filter: brightness(1.1) drop-shadow(0 0 3px #333);
+    stroke-width: 2px;
+}
+
+.dot.deactive {
+    fill: rgba(211, 211, 211, 0.806) !important;
+    stroke-width: 0px;
+
+}
+
+.axis-btn-group {
+    display: flex;
+    gap: .8rem;
+    padding: 1rem;
+    color: #fff;
+    font-weight: bold;
+    justify-content: space-between;
+}
+
+.sc_tooltip .highlight::marker {
+    color: #16A085;
+}
+
+.sc_tooltip {
+    position: absolute;
+    background-color: #000000a9;
+    font-size: 16px;
+    display: none;
+    box-shadow: 0 0 3px #333;
+    width: max-content;
+    padding: .3rem .5rem;
+    border-radius: 8px;
+    color: #fff;
+    left: 0;
+    right: 0;
+    z-index: 99;
+}
+
+.sc_tooltip.active {
+    display: inline-block;
+    /* transform: translate(-100%, -100%); */
+}
+
+.sc_tooltip ul {
+    margin: 0;
+    padding: .5rem;
+    padding-left: 1.7rem;
+    list-style: disc;
+}
+
+
+.sc_tooltip>.sc-name {
+    margin: 0;
+    padding: .3rem;
+    border-bottom: 3px solid #f3bc00;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+
+
+
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #333;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-family: 'Arial', sans-serif;
+    font-size: 12px;
+    fill: #333;
+}
+
+.grid line {
+    stroke: #ddd;
+    stroke-opacity: 0.7;
+    shape-rendering: crispEdges;
+}
+
+.grid path {
+    stroke-width: 0;
+}

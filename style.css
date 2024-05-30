@@ -126,8 +126,13 @@ body {
 
 .right-top {
     grid-area: brand-filter;
+    overflow: auto;
 
+    display: flex;
+    flex-direction: column;
 }
+
+
 
 .right-bottom {
     grid-area: color-filter;
@@ -266,13 +271,15 @@ label {
 }
 
 .pc-control {
-    flex: 2;
+    /* flex: 2; */
     background-color: var(--bs-dark);
-    padding: 20px 20px 1rem 20px;
+    padding: 20px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row-reverse;
     /* gap: .4rem; */
     justify-content: space-between;
+    align-items: center;
+    position: relative;
 }
 
 
@@ -396,12 +403,20 @@ li.median::marker {
 }
 
 .switch {
-    margin: 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: start;
+    /* margin: 0; */
+    /* display: flex; */
+    /* justify-content: space-between; */
+    /* align-items: start; */
     /* flex: 0; */
-    padding-left: 0;
+    /* padding-left: 0; */
+    position: absolute;
+    right: 20px;
+    top: 15px;
+}
+
+.linear-bar {
+    flex: 1;
+    /* background-color: #e10c0c; */
 }
 
 .btn-group>* {
@@ -409,19 +424,47 @@ li.median::marker {
 }
 
 .color-legend {
+    flex: 1 1 0;
+    display: none;
+    width: 100%;
+    height: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(30%, 1fr));
+    grid-row: 1fr;
+    gap: 1rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+    place-items: center;
+    font-size: 1em;
+    justify-content: center;
+    /* place-content: space-between; */
+    padding: .5rem;
+
+}
+
+.color-legend .box {
+    color: #fff;
+    display: flex;
+    gap: .3rem;
+    align-items: center;
+    justify-content: start;
+    width: 100%;
+    padding-left: 10%;
+    /* transform: translateX(10%); */
+    padding-block: .5rem;
+}
+
+
+/* .color-legend {
     display: none;
     grid-auto-flow: column;
     grid-template-columns: repeat(auto-fit, minmax(0, fit-content));
-    /* grid-template-rows: 1fr, 1fr; */
     gap: 1rem;
     overflow-y: hidden;
-    /* overflow-y: auto; */
-
-
-
     flex: 1;
     place-items: center;
-}
+} */
+
 
 /* .color-legend {
     display: none;
@@ -432,13 +475,13 @@ li.median::marker {
     overflow-y: hidden;
     overflow-x: auto;
 } */
-.box {
+/* .box {
     color: #fff;
     display: flex;
     gap: .3rem;
     align-items: center;
     padding-bottom: .5rem;
-}
+} */
 
 .box.deactive .rect {
     border: none;
@@ -492,7 +535,8 @@ li.median::marker {
 }
 
 .brand_tooltip.active {
-    display: block;
+    display: inline-block;
+    transform: translate(-100%, -100%);
 }
 
 .brand_tooltip ul {

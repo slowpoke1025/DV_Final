@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../lib/d3@6.js"></script>
+    <link rel="stylesheet" href="scatter.css">
+    <script defer src="scatter.js" type="module"></script>
+</head>
+
+<body>
+    <div id="scatterplot">
+        <div class="scatterplot-control">
+            <label for="x-axis-select">X Axis:</label>
+            <select id="x-axis-select">
+                <option value="mmr">MMR</option>
+                <option value="year">Year</option>
+                <option value="sellingprice">Selling price</option>
+                <option value="odometer">odometer</option>
+                <option value="sp-mmr">SP-MMR</option>
+                <option value="condition">condition</option>
+                <option value="age">age</option>
+            </select>
+            <label for="y-axis-select">Y Axis:</label>
+            <select id="y-axis-select">
+                <option value="sellingprice">Selling price</option>
+                <option value="mmr">MMR</option>
+                <option value="year">Year</option>
+                <option value="odometer">odometer</option>
+                <option value="sp-mmr">SP-MMR</option>
+                <option value="condition">condition</option>
+                <option value="age">age</option>
+            </select>
+        </div>
+        <div class="scatterplot-container"></div>
+    </div>
+
+    <div id="color-filter">
+
+        <label class="color-select-label">Select Colors:</label>
+        <div class="container-for-color">
+            <input type="checkbox" id="all-colors" checked> <label class="color-select-label">ALL</label>
+        </div>
+        <div class="container-for-color">
+            <input type="checkbox" class="color-select" value="black" color="#000000" checked> <label
+                class="color-select-label">Black</label>
+        </div class="container-for-color">
+        <div class="container-for-color">
+            <input type="checkbox" class="color-select" value="white" color="#FFFFFF" checked> <label
+                class="color-select-label">White</label>
+        </div>
+        <div class="container-for-color">
+            <input type="checkbox" class="color-select" value="silver" color="#C0C0C0" checked> <label
+                class="color-select-label">Silver</label>
+        </div>
+        <div class="container-for-color">
+            <input type="checkbox" class="color-select" value="gray" color="#808080" checked> <label
+                class="color-select-label">Gray</label>
+        </div>
+        <div class="container-for-color">
+            <input type="checkbox" class="color-select" value="others" color="#FFD700" checked> <label
+                class="color-select-label">Others</label>
+        </div>
+
+    </div>
+</body>
+
+</html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Car Radar Chart</title>
@@ -7,15 +8,18 @@
         body {
             font-family: Arial, sans-serif;
         }
+
         #controls {
             margin-bottom: 20px;
         }
+
         #chart {
             width: 600px;
             height: 600px;
         }
     </style>
 </head>
+
 <body>
     <div id="controls">
         <label for="make">Make:</label>
@@ -23,14 +27,14 @@
     </div>
     <div id="legend"></div>
     <div id="chart"></div>
-    
+
     <script src="https://d3js.org/d3.v4.js"></script>
     <script src="./RadarChart.js"></script>
     <script>
-        const csvUrl = './car_prices_cleaned.csv';
+        const csvUrl = './dataset/car_prices_cleaned.csv';
 
-     
-        function drawRadarChart(data,colorScale) {
+
+        function drawRadarChart(data, colorScale) {
             const chartConfig = {
                 w: 700,
                 h: 700,
@@ -46,39 +50,39 @@
             legendContainer.selectAll('*').remove();
 
             const svg = legendContainer.append('svg')
-                                       .attr('width', data.length *150)
-                                       .attr('height',  20);
+                .attr('width', data.length * 150)
+                .attr('height', 20);
 
             const legend = svg.selectAll('.legend')
-                              .data(data)
-                              .enter()
-                              .append('g')
-                              .attr('class', 'legend')
-                              .attr('transform', (d, i) => `translate( ${i * 150}, 0)`);
+                .data(data)
+                .enter()
+                .append('g')
+                .attr('class', 'legend')
+                .attr('transform', (d, i) => `translate( ${i * 150}, 0)`);
 
             legend.append('rect')
-                  .attr('x', 0)
-                  .attr('y', 0)
-                  .attr('width', 10)
-                  .attr('height', 10)
-                  .style('fill', (d, i) => colorScale(i));
+                .attr('x', 0)
+                .attr('y', 0)
+                .attr('width', 10)
+                .attr('height', 10)
+                .style('fill', (d, i) => colorScale(i));
 
             legend.append('text')
-                  .attr('x', 20)
-                  .attr('y', 10)
-                  .attr('dy', '0.35em')
-                  .text(d => d[0].make );
+                .attr('x', 20)
+                .attr('y', 10)
+                .attr('dy', '0.35em')
+                .text(d => d[0].make);
         }
 
- 
-        d3.csv(csvUrl, function(error, csvData) {
+
+        d3.csv(csvUrl, function (error, csvData) {
             if (error) {
                 console.error('Error loading CSV', error);
                 return;
             }
-            console.log('CSV Data:', csvData);  
+            console.log('CSV Data:', csvData);
             const data = Array.isArray(csvData) ? csvData : Object.values(csvData);
-            console.log('Processed Data:', data); 
+            console.log('Processed Data:', data);
 
 
             const subset = data.slice(0, 10000);
@@ -91,48 +95,44 @@
                 .text(d => d)
                 .attr('value', d => d);
 
-    
+
             function updateChart() {
                 const selectedMakes = makeSelect.selectAll('option:checked').nodes().map(d => d.value);
                 const selectedData = selectedMakes.map(make => {
                     const filteredData = subset.filter(d => d.make === make);
                     if (filteredData.length > 0) {
-                  
+
                         return [
-                        
-                            { axis: 'SP-MMR',make:filteredData[0].make, value: Math.abs(d3.mean(filteredData, d => +d.sellingprice - +d.mmr)) }, // top
-                            { axis: 'Total', make:filteredData[0].make,value: filteredData.length * 100 }, // left
-                            { axis: 'MMR', make:filteredData[0].make,value: +filteredData[0].mmr }, // bottom
-                            { axis: 'SP', make:filteredData[0].make,value: +filteredData[0].sellingprice } // right
+
+                            { axis: 'SP-MMR', make: filteredData[0].make, value: Math.abs(d3.mean(filteredData, d => +d.sellingprice - +d.mmr)) }, // top
+                            { axis: 'Total', make: filteredData[0].make, value: filteredData.length * 100 }, // left
+                            { axis: 'MMR', make: filteredData[0].make, value: +filteredData[0].mmr }, // bottom
+                            { axis: 'SP', make: filteredData[0].make, value: +filteredData[0].sellingprice } // right
                         ];
-                  
+
                     }
                     return null;
                 }).filter(d => d !== null);
 
                 if (selectedData.length > 0) {
-                    
+
                     const colorScale = d3.scaleOrdinal(d3.schemeCategory10).domain(selectedMakes);
                     updateLegend(selectedData, colorScale);
-                    drawRadarChart(selectedData,colorScale);
-                    
+                    drawRadarChart(selectedData, colorScale);
+
                 } else {
                     d3.select("#chart").selectAll("*").remove();
                     d3.select("#legend").selectAll("*").remove();
                 }
             }
 
-       
+
             makeSelect.on('change', updateChart);
 
-           
+
             updateChart();
         });
     </script>
 </body>
+
 </html>
-
-
-
-
-

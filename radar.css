@@ -1,0 +1,17 @@
+#radar-plot {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.radar-control {
+    flex: 2;
+    background-color: #ffffff11;
+    overflow: auto;
+}
+
+.radar-container {
+    flex: 8;
+    background-color: #ffffff;
+    /* position: relative; */
+}
