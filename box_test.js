@@ -14,6 +14,13 @@ export function Box(container, data) {
     .attr("transform", `translate(${margin.left},${margin.top})`);
 
   const tooltip = d3.select(".box_tooltip");
+  const sortSwitch = d3.select("#box-sort-switch").on("change", (e, d) => {
+    by = sortSwitch.property("checked") ? "median" : "mean";
+    updateBoxPlot(data);
+  });
+
+  let category = "state";
+  let by = "median";
   let summaryStats = summarize(data);
 
   const y = d3
@@ -36,6 +43,25 @@ export function Box(container, data) {
     .call(d3.axisBottom(x));
 
   updateBoxPlot(data);
+
+  function styleAxis(svg) {
+    // Customizing the axis line
+    svg
+      .selectAll(".axis line")
+      .style("stroke", "#333")
+      .style("stroke-width", "2px");
+
+    // Customizing the axis path
+    svg
+      .selectAll(".axis path")
+      .style("stroke", "#333")
+      .style("stroke-width", "5px");
+
+    svg
+      .selectAll(".axis text")
+      .style("font-size", "14px")
+      .style("fill", "#000");
+  }
 
   function updateBoxPlot(data) {
     const DURATION = 750;
@@ -85,6 +111,17 @@ export function Box(container, data) {
       .attr("stroke", "black")
       .attr("fill", "teal");
 
+    let point = svg
+      .selectAll(".point")
+      .data(summaryStats, (d) => d[0])
+      .join("circle")
+      .attr("class", "point")
+      .transition()
+      .attr("cx", (d) => x(d[1].mean))
+      .attr("cy", (d) => y(d[0]) + y.bandwidth() / 2)
+      .attr("r", 3)
+      .attr("fill", "orange");
+
     let medianLines = svg
       .selectAll(".medianLines")
       .data(summaryStats, (d) => d[0])
@@ -98,7 +135,7 @@ export function Box(container, data) {
       .attr("x2", (d) => x(d[1].median))
       .attr("stroke", "black");
 
-    const dimensions = ["min", "q1", "median", "q3", "IQR", "max"];
+    const dimensions = ["min", "q1", "median", "mean", "q3", "IQR", "max"];
     function showTooltip(e, d) {
       const lists = dimensions.reduce((acc, col) => {
         const name = col;
@@ -131,6 +168,21 @@ export function Box(container, data) {
     function hideTooltip(e, d) {
       tooltip.classed("active", false);
     }
+
+    const agg_options = document.querySelectorAll(
+      ".box-control .dropdown-item"
+    );
+    const dropdownBoxBtn = document.getElementById("dropdownBoxBtn");
+
+    agg_options.forEach((d) => {
+      d.addEventListener("click", (e) => {
+        const value = e.target.dataset.box;
+        dropdownBoxBtn.textContent = value;
+        category = value;
+        updateBoxPlot(data);
+      });
+    });
+    styleAxis(svg);
     // let boxes = svg
     //   .selectAll(".box")
     //   .data(summaryStats)
@@ -192,11 +244,13 @@ export function Box(container, data) {
           let IQR = q3 - q1;
           let min = Math.max(0, q1 - 1.5 * IQR);
           let max = q3 + 1.5 * IQR;
-          return { min, q1, median, q3, IQR, max };
+          let mean = d3.mean(v, (g) => +g.sellingprice);
+
+          return { min, q1, median, q3, IQR, max, mean };
         },
-        (d) => d.state
+        (d) => d[category]
       )
-    ).sort((b, a) => a[1]["median"] - b[1]["median"]);
+    ).sort((b, a) => a[1][by] - b[1][by]);
   }
 
   return { updateBoxPlot };

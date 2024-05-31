@@ -5,11 +5,27 @@
 }
 
 .box-control {
-    height: 0;
     background-color: #ffffff11;
-    overflow: auto;
+    padding: .8rem;
+}
+
+.box-control .navbar-brand {
+    color: #fff;
+}
+
+.box-control .nav-item {
+    display: flex;
 
 }
+
+.box-control .navbar-nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.box-control .form-switch {}
 
 .box-container {
     flex: 9;

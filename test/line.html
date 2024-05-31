@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Line Plot with Gradient Area Fill</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+    <svg id="chart" width="800" height="400"></svg>
+    <script>
+        const data = [
+            { x: 0, y: 30 },
+            { x: 1, y: 40 },
+            { x: 2, y: 35 },
+            { x: 3, y: 50 },
+            { x: 4, y: 55 },
+            { x: 5, y: 60 },
+            // ... more data points
+        ];
+
+        const svg = d3.select("#chart"),
+            margin = { top: 20, right: 30, bottom: 30, left: 40 },
+            width = +svg.attr("width") - margin.left - margin.right,
+            height = +svg.attr("height") - margin.top - margin.bottom;
+
+        const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+        const x = d3.scaleLinear()
+            .domain(d3.extent(data, d => d.x))
+            .range([0, width]);
+
+        const y = d3.scaleLinear()
+            .domain([0, d3.max(data, d => d.y)])
+            .range([height, 0]);
+
+        const line = d3.line()
+            .x(d => x(d.x))
+            .y(d => y(d.y));
+
+        const area = d3.area()
+            .x(d => x(d.x))
+            .y0(height)
+            .y1(d => y(d.y));
+
+        // Define the gradient
+        svg.append("defs").append("linearGradient")
+            .attr("id", "area-gradient")
+            .attr("x1", "0%").attr("y1", "0%")
+            .attr("x2", "0%").attr("y2", "100%")
+            .selectAll("stop")
+            .data([
+                { offset: "0%", color: "steelblue", opacity: 0.6 },
+                { offset: "100%", color: "steelblue", opacity: 0.1 }
+            ])
+            .enter().append("stop")
+            .attr("offset", d => d.offset)
+            .attr("stop-color", d => d.color)
+            .attr("stop-opacity", d => d.opacity);
+
+        // Append the area with gradient fill
+        g.append("path")
+            .datum(data)
+            .attr("fill", "url(#area-gradient)")
+            .attr("d", area);
+
+        // Append the line
+        g.append("path")
+            .datum(data)
+            .attr("fill", "none")
+            .attr("stroke", "steelblue")
+            .attr("stroke-width", 1.5)
+            .attr("d", line);
+
+        // Add x-axis
+        g.append("g")
+            .attr("transform", `translate(0,${height})`)
+            .call(d3.axisBottom(x));
+
+        // Add y-axis
+        g.append("g")
+            .call(d3.axisLeft(y));
+    </script>
+</body>
+
+</html>

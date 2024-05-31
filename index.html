@@ -300,16 +300,39 @@
                 <div class="tab-pane fade" id="box" role="tabpanel" aria-labelledby="box-tab">
                     <div id="box-plot">
                         <div class="box-control">
-                            <label for="make-filter">Filter by Make:</label>
-                            <select id="make-filter">
-                                <option value="All">All</option>
-                                <!-- Options will be populated by D3.js -->
-                            </select>
+                            <ul class="navbar-nav">
+                                <li class="nav-item dropdown">
+                                    <div class="navbar-brand">Category</div>
+                                    <button class="btn btn-secondary dropdown-toggle btn-md" type="button"
+                                        id="dropdownBoxBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                                        state
+                                    </button>
 
-                            <label for="state-filter">Filter by State:</label>
-                            <div id="state-filter">
-                                <!-- Checkboxes will be populated by D3.js -->
-                            </div>
+                                    <ul class="dropdown-menu dropdown-menu-dark">
+                                        <li><button class="dropdown-item" type="button" data-box="state">state</button>
+                                        </li>
+                                        <li><button class="dropdown-item" type="button" data-box="make">make</button>
+                                        </li>
+                                        <li><button class="dropdown-item" type="button" data-box="body">body</button>
+                                        </li>
+                                        <li><button class="dropdown-item" type="button"
+                                                data-box="transmission">transmission</button>
+                                        </li>
+                                        <li><button class="dropdown-item" type="button" data-box="color">color</button>
+                                        </li>
+                                        <li><button class="dropdown-item" type="button"
+                                                data-box="interior">interior</button>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <div class="form-check form-switch">
+
+                                    <label class="form-check-label" for="flexSwitchCheckDefault">
+                                        <input class="form-check-input mb-3" type="checkbox" role="switch"
+                                            id="box-sort-switch" checked>Sort By: mean / medain</label>
+
+                                </div>
+                            </ul>
                         </div>
                         <div class="box-container">
                             <div class="box_tooltip">

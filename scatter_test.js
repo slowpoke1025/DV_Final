@@ -161,7 +161,7 @@ export function Scatter(container, data) {
       let value = d[col];
       if (name == "sellingprice" || name == "mmr" || name == "sp-mmr")
         value = `${Math.round(d[col]).toLocaleString()}`;
-      else if (name == "saledate") {
+      else if (d[col] instanceof Date) {
         value = d3.timeFormat("%Y-%m-%d")(d[col]);
       }
       if (name == null) return acc;
