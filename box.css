@@ -75,3 +75,27 @@
     padding: .3rem;
     border-bottom: 3px solid #f3bc00;
 }
+
+
+.outlier {
+    transition: all 1s, r .5s;
+}
+
+.outlier:hover {
+    r: 8px;
+}
+
+.point {
+    transition: all 1s;
+
+}
+
+.outlier-check-wrapper {
+    display: flex;
+    color: #ffffff;
+    gap: .3rem;
+}
+
+.form-check-label {
+    color: #ffffff;
+}

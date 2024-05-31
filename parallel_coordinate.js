@@ -81,7 +81,8 @@ export function Parallel_coordinate(main, data) {
     .append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-  function updatePC(data) {
+  function updatePC(_data) {
+    data = _data;
     for (let col of dimensions) {
       extents[col] = d3.extent(data, (d) => +d[col]);
       let t = d3.scaleLinear([0, ticks - 1], extents[col]);

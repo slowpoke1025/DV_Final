@@ -14,7 +14,7 @@ const LOADED = {};
 
 d3.csv("./dataset/car_prices_cleaned.csv").then(async (data) => {
   const columns = data.columns;
-  data = data.slice(0, 1000);
+  data = data.slice(-1000);
   data.columns = columns;
   let __data = data;
   let currentPage = null;
@@ -70,8 +70,7 @@ d3.csv("./dataset/car_prices_cleaned.csv").then(async (data) => {
       pc?.updatePC(__data);
 
       if (flag) {
-        console.log(flag);
-        resetBtn.click();
+        // resetBtn.click();
       }
     }
   );
@@ -81,13 +80,13 @@ d3.csv("./dataset/car_prices_cleaned.csv").then(async (data) => {
   const resetBtn = document.getElementById("pc-reset");
   const allBtn = document.getElementById("pc-all");
   const lengends = d3.select(".color-legend");
-
+  let value;
   color_options.forEach((d) => {
     d.addEventListener("click", (e) => {
-      const value = e.target.dataset.color;
+      value = e.target.dataset.color;
       dropdownColorVarBtn.textContent = value;
       const unique = new Set();
-      data.forEach((d) => {
+      __data.forEach((d) => {
         if (!unique.has(d[value])) {
           unique.add(d[value]);
         }
@@ -176,9 +175,10 @@ d3.csv("./dataset/car_prices_cleaned.csv").then(async (data) => {
       pc?.updatePC(__data);
       if (flag) {
         console.log(flag);
-        resetBtn.click();
+        // resetBtn.click();
       }
 
+      document.querySelector(`[data-color=${value}]`).click();
       // updateBrands(_data);
     }
   );

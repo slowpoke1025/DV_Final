@@ -259,7 +259,7 @@ export function Scatter(container, data) {
           .selectAll(`.dot:not(.${d})`)
           .filter((n) => selectList.has(n[key]))
           .classed("deactive", false)
-          .transition()
+          // .transition()
           .style("fill", (n) => color(n[key]))
           .raise();
         // .attr("fill", "lightgray")

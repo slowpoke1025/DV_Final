@@ -18,10 +18,15 @@ export function Box(container, data) {
     by = sortSwitch.property("checked") ? "median" : "mean";
     updateBoxPlot(data);
   });
-
+  const outlierCheck = d3.select("#outlier-check");
+  outlierCheck.on("change", (e, d) => {
+    outlierFlag = !outlierFlag;
+    updateBoxPlot(data);
+  });
   let category = "state";
   let by = "median";
-  let summaryStats = summarize(data);
+  let outlierFlag = true;
+  let summaryStats;
 
   const y = d3
     .scaleBand()
@@ -29,10 +34,8 @@ export function Box(container, data) {
     .domain(data.map((d) => d.state))
     .padding(0.5);
 
-  const x = d3
-    .scaleLinear()
-    .range([0, width])
-    .domain([0, d3.max(summaryStats, (d) => d[1].max)]);
+  const x = d3.scaleLinear().range([0, width]);
+  // .domain([0, d3.max(summaryStats, (d) => d[1].max)]);
 
   const y_axis = svg.append("g").attr("class", "y axis").call(d3.axisLeft(y));
 
@@ -63,15 +66,48 @@ export function Box(container, data) {
       .style("fill", "#000");
   }
 
-  function updateBoxPlot(data) {
+  function updateBoxPlot(_data) {
+    data = _data;
     const DURATION = 750;
     summaryStats = summarize(data);
+    const outliers = summaryStats.map((d) => d[1].outliers).flat();
 
+    if (outlierFlag) {
+      x.domain([
+        Math.min(
+          d3.min(summaryStats, (d) => d[1].min),
+          d3.min(outliers, (d) => +d.sellingprice)
+        ),
+        Math.max(
+          d3.max(summaryStats, (d) => d[1].max),
+          d3.max(outliers, (d) => +d.sellingprice)
+        ),
+      ]);
+    } else {
+      x.domain([0, d3.max(summaryStats, (d) => d[1].max)]);
+    }
     y.domain(summaryStats.map((d) => d[0]));
-    x.domain([0, d3.max(summaryStats, (d) => d[1].max)]);
 
     y_axis.transition().duration(DURATION).call(d3.axisLeft(y));
     x_axis.transition().duration(DURATION).call(d3.axisBottom(x));
+
+    if (outlierFlag) {
+      let outpoints = svg
+        .selectAll(".outlier")
+        .data(outliers)
+        .join("circle")
+        .attr("class", "outlier")
+        .attr("cx", (d) => x(+d.sellingprice))
+        .attr("cy", (d) => y(d[category]) + y.bandwidth() / 2)
+        .attr("r", 0)
+        .attr("fill", "red")
+        .on("mouseenter", showOlTooltip)
+        .on("mouseout", hideTooltip)
+        .transition()
+        .attr("r", 3);
+    } else {
+      svg.selectAll(".outlier").remove();
+    }
 
     let vertLines = svg
       .selectAll(".vertLines")
@@ -101,6 +137,8 @@ export function Box(container, data) {
       .attr("class", "box")
       .on("mousemove", showTooltip)
       .on("mouseout", hideTooltip)
+      .on("click", (e, d) => console.log(d))
+
       .transition()
       .duration(DURATION)
       .attr("x", (d) => x(d[1].q1))
@@ -116,8 +154,8 @@ export function Box(container, data) {
       .data(summaryStats, (d) => d[0])
       .join("circle")
       .attr("class", "point")
-      .transition()
       .attr("cx", (d) => x(d[1].mean))
+      .transition()
       .attr("cy", (d) => y(d[0]) + y.bandwidth() / 2)
       .attr("r", 3)
       .attr("fill", "orange");
@@ -183,6 +221,63 @@ export function Box(container, data) {
       });
     });
     styleAxis(svg);
+
+    let ol_dimensions = [
+      category,
+      "sellingprice",
+      "year",
+      "mmr",
+      "age",
+      "sp-mmr",
+    ];
+
+    function showOlTooltip(e, d) {
+      const lists = ol_dimensions.reduce((acc, col) => {
+        const name = col;
+        return (
+          acc +
+          `<li ${col == "sellingprice" ? "highlight" : ""}">${name}: 
+          ${
+            col == category ? d[col] : Math.round(+d[col]).toLocaleString()
+          }</li>`
+        );
+      }, ``);
+
+      let [left, top] = [e.pageX - rect.x, e.pageY - rect.y];
+      let flag = e.pageY < rect.y + height / 2;
+      let flagX = e.pageX < rect.x + width / 2;
+
+      if (flag) {
+        top += 10;
+      } else {
+        top -= 10;
+      }
+
+      if (flagX) {
+        left += 10;
+      } else {
+        left -= 10;
+      }
+      tooltip
+        .style("left", `calc(${left}px)`)
+        .style("top", `calc(${top}px)`)
+        .style(
+          "transform",
+          (d) =>
+            (flag ? `translateY(0)` : `translateY(-100%)`) +
+            " " +
+            (flagX ? `translateX(0)` : `translateX(-100%)`)
+        )
+        .classed("active", true)
+
+        .select(".box-name")
+        .text(d.make + " " + d.model);
+
+      tooltip.select("ul").html(lists);
+    }
+    function hideOlTooltip(e, d) {
+      tooltip.classed("active", false);
+    }
     // let boxes = svg
     //   .selectAll(".box")
     //   .data(summaryStats)
@@ -245,8 +340,10 @@ export function Box(container, data) {
           let min = Math.max(0, q1 - 1.5 * IQR);
           let max = q3 + 1.5 * IQR;
           let mean = d3.mean(v, (g) => +g.sellingprice);
-
-          return { min, q1, median, q3, IQR, max, mean };
+          let outliers = v.filter(
+            (g) => +g.sellingprice > max || +g.sellingprice < min
+          );
+          return { min, q1, median, q3, IQR, max, mean, outliers };
         },
         (d) => d[category]
       )
