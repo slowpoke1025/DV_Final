@@ -307,6 +307,10 @@ label {
     /* position: relative; */
 }
 
+.ps-container .link {
+    transition: stroke .5s;
+}
+
 .link.deactive,
 .link.deselected {
     stroke: #dfd9d961;

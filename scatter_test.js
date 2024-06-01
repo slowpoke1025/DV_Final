@@ -85,7 +85,9 @@ export function Scatter(container, data) {
     _color;
   setUp(data, xaxis, yaxis);
 
-  function setUp(data) {
+  function setUp(_data) {
+    data = _data;
+    console.log(new Set(data.map((d) => d.make)));
     x.domain(d3.extent(data, (d) => +d[xaxis]));
 
     y.domain(d3.extent(data, (d) => +d[yaxis]));
@@ -98,7 +100,7 @@ export function Scatter(container, data) {
       .data(data)
       .join("circle")
       .attr("class", (d) => `dot ${d?.[_key] ?? ""}`)
-      .classed("deactive", (d) => !_selectedList.has(d[_key]))
+      // .classed("deactive", (d) => !_selectedList.has(d[_key]))
       .each(function (d) {
         if (_selectedList.has(d[_key])) {
           d3.select(this)

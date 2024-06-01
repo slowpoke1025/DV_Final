@@ -151,7 +151,7 @@ export function BubbleFilter(container, data, update) {
     const newElem = _selectedBrand.difference(selectBrand);
     const oldElem = selectBrand.difference(_selectedBrand);
 
-    newElem.forEach((d) => selectBrand.add(d));
+    if (selectBrand.size == 0) newElem.forEach((d) => selectBrand.add(d));
     oldElem.forEach((d) => selectBrand.delete(d));
 
     handleControlBtn();
@@ -172,7 +172,10 @@ export function BubbleFilter(container, data, update) {
 
           group
             .append("circle")
-            .attr("class", "bubble selected")
+            .attr(
+              "class",
+              (d) => `bubble ${selectBrand.has(d.make) ? "selected" : ""}`
+            )
             .attr("r", (d) => r[target](calc(d, target)))
             .style("fill", (d) => colors[target])
             .on("click", bubbleClick)
@@ -258,19 +261,20 @@ export function BubbleFilter(container, data, update) {
         selectBrand.add(d.make);
       }
 
-      if (selectBrand.size >= _selectedBrand.size) {
-        allBtn.disabled = true;
-      } else if (selectBrand.size == 0) {
-        resetBtn.disabled = true;
-      } else {
-        allBtn.disabled = false;
-        resetBtn.disabled = false;
-      }
+      // if (selectBrand.size >= _selectedBrand.size) {
+      //   allBtn.disabled = true;
+      // } else if (selectBrand.size == 0) {
+      //   resetBtn.disabled = true;
+      // } else {
+      //   allBtn.disabled = false;
+      //   resetBtn.disabled = false;
+      // }
       handleControlBtn();
       update();
     }
 
     function handleControlBtn() {
+      console.log(selectBrand);
       if (data.length == 0) {
         resetBtn.disabled = true;
         allBtn.disabled = true;
@@ -278,6 +282,7 @@ export function BubbleFilter(container, data, update) {
         resetBtn.disabled = true;
       } else if (selectBrand.size >= _selectedBrand.size) {
         allBtn.disabled = true;
+        resetBtn.disabled = false;
       } else {
         allBtn.disabled = false;
         resetBtn.disabled = false;

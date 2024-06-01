@@ -15,9 +15,22 @@ export function Box(container, data) {
 
   const tooltip = d3.select(".box_tooltip");
   const sortSwitch = d3.select("#box-sort-switch").on("change", (e, d) => {
-    by = sortSwitch.property("checked") ? "median" : "mean";
+    by = sortSwitch.property("checked") ? "median" : "size";
     updateBoxPlot(data);
   });
+
+  const agg_options = document.querySelectorAll(".dropdown-agg .dropdown-item");
+  const dropdownAggBtn = document.getElementById("dropdownAggBtn");
+
+  agg_options.forEach((d) => {
+    d.addEventListener("click", (e) => {
+      const value = e.target.dataset.box;
+      dropdownAggBtn.textContent = value;
+      by = value;
+      updateBoxPlot(data);
+    });
+  });
+
   const outlierCheck = d3.select("#outlier-check");
   outlierCheck.on("change", (e, d) => {
     outlierFlag = !outlierFlag;
@@ -64,6 +77,8 @@ export function Box(container, data) {
       .selectAll(".axis text")
       .style("font-size", "14px")
       .style("fill", "#000");
+
+    svg.selectAll(".axis.y").style("font-weight", "bold");
   }
 
   function updateBoxPlot(_data) {
@@ -72,12 +87,12 @@ export function Box(container, data) {
     summaryStats = summarize(data);
     const outliers = summaryStats.map((d) => d[1].outliers).flat();
 
-    if (outlierFlag) {
+    if (outlierFlag && outliers.length > 0) {
+      d3.max(summaryStats, (d) => d[1].max),
+        d3.max(outliers, (d) => +d.sellingprice);
+
       x.domain([
-        Math.min(
-          d3.min(summaryStats, (d) => d[1].min),
-          d3.min(outliers, (d) => +d.sellingprice)
-        ),
+        0,
         Math.max(
           d3.max(summaryStats, (d) => d[1].max),
           d3.max(outliers, (d) => +d.sellingprice)
@@ -171,9 +186,20 @@ export function Box(container, data) {
       .attr("y2", (d) => y(d[0]) + y.bandwidth())
       .attr("x1", (d) => x(d[1].median))
       .attr("x2", (d) => x(d[1].median))
-      .attr("stroke", "black");
+      .attr("stroke", "white")
+      .attr("stroke-width", "2px");
 
-    const dimensions = ["min", "q1", "median", "mean", "q3", "IQR", "max"];
+    const dimensions = [
+      "min",
+      "q1",
+      "median",
+      "mean",
+      "q3",
+      "IQR",
+      "max",
+      "size",
+      "sum",
+    ];
     function showTooltip(e, d) {
       const lists = dimensions.reduce((acc, col) => {
         const name = col;
@@ -207,12 +233,10 @@ export function Box(container, data) {
       tooltip.classed("active", false);
     }
 
-    const agg_options = document.querySelectorAll(
-      ".box-control .dropdown-item"
-    );
+    const options = document.querySelectorAll(".dropdown-box .dropdown-item");
     const dropdownBoxBtn = document.getElementById("dropdownBoxBtn");
 
-    agg_options.forEach((d) => {
+    options.forEach((d) => {
       d.addEventListener("click", (e) => {
         const value = e.target.dataset.box;
         dropdownBoxBtn.textContent = value;
@@ -340,14 +364,16 @@ export function Box(container, data) {
           let min = Math.max(0, q1 - 1.5 * IQR);
           let max = q3 + 1.5 * IQR;
           let mean = d3.mean(v, (g) => +g.sellingprice);
+          let size = v.length;
+          let sum = d3.sum(v, (d) => +d.sellingprice);
           let outliers = v.filter(
             (g) => +g.sellingprice > max || +g.sellingprice < min
           );
-          return { min, q1, median, q3, IQR, max, mean, outliers };
+          return { min, q1, median, q3, IQR, max, mean, size, sum, outliers };
         },
         (d) => d[category]
       )
-    ).sort((b, a) => a[1][by] - b[1][by]);
+    ).sort((a, b) => a[1][by] - b[1][by]);
   }
 
   return { updateBoxPlot };

@@ -107,7 +107,7 @@
         <div class="main">
             <ul class="nav nav-tabs bg-dark" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="parallel_coordinate-tab" data-bs-toggle="tab"
+                    <button class="nav-link " id="parallel_coordinate-tab" data-bs-toggle="tab"
                         data-bs-target="#pc-container" type="button" role="tab">ParallelCoordinate</button>
                 </li>
                 <li class="nav-item" role="presentation">
@@ -308,7 +308,7 @@
                                         state
                                     </button>
 
-                                    <ul class="dropdown-menu dropdown-menu-dark">
+                                    <ul class="dropdown-menu dropdown-menu-dark dropdown-box">
                                         <li><button class="dropdown-item" type="button" data-box="state">state</button>
                                         </li>
                                         <li><button class="dropdown-item" type="button" data-box="make">make</button>
@@ -330,14 +330,35 @@
                                     <input type="checkbox" id="outlier-check" checked>
                                     <div>outliers</div>
                                 </div>
-                                <div class="form-check form-switch">
 
+                                <li class="nav-item dropdown">
+                                    <div class="navbar-brand sort">Sort By</div>
+                                    <button class="btn btn-secondary dropdown-toggle btn-sm" type="button"
+                                        id="dropdownAggBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                                        median
+                                    </button>
+
+                                    <ul class="dropdown-menu dropdown-menu-dark dropdown-agg">
+                                        <li><button class="dropdown-item" type="button"
+                                                data-box="median">median</button>
+                                        </li>
+                                        <li><button class="dropdown-item" type="button" data-box="mean">mean</button>
+                                        </li>
+                                        <li><button class="dropdown-item" type="button" data-box="sum">sum</button>
+                                        </li>
+                                        <li><button class="dropdown-item" type="button" data-box="size">size</button>
+                                        </li>
+                                    </ul>
+                                </li>
+
+
+                                <!-- <div class="form-check form-switch">
                                     <div class="form-check-label" for="flexSwitchCheckDefault">
                                         <input class="form-check-input" type="checkbox" role="switch"
-                                            id="box-sort-switch" checked>Sort By: mean / medain
+                                            id="box-sort-switch" checked>Sort By: mean / median
                                     </div>
 
-                                </div>
+                                </div> -->
                             </ul>
                         </div>
                         <div class="box-container">

@@ -24,10 +24,10 @@ export function MapFilter(
   //     .csv("./dataset/car_prices_cleaned.csv")
   //     .then((data) => {
   const interpolaters = {
-    sellingprice_size: d3.interpolateGnBu,
+    sellingprice_size: d3.interpolateBlues,
     sellingprice_mean: d3.interpolateGreens,
     sellingprice_sum: d3.interpolateReds,
-    sellingprice_median: d3.interpolateBlues,
+    sellingprice_median: d3.interpolateRdPu,
   };
   // states_list.clear();
   data.forEach((d) => states_list.add(d.state));

@@ -14,9 +14,21 @@ const LOADED = {};
 
 d3.csv("./dataset/car_prices_cleaned.csv").then(async (data) => {
   const columns = data.columns;
-  data = data.slice(-1000);
+  // data = data.map((d) => {
+  //   if (
+  //     !["white", "black", "silver", "gray", "blue", "red"].includes(d.color)
+  //   ) {
+  //     d.color = "other";
+  //   }
+  //   if (!["black", "grey", "beige", "tan"].includes(d.interior)) {
+  //     d.interior = "other";
+  //   }
+  //   return d;
+  // });
+  data = data.slice(10000, 12000); // 10000, 16000
   data.columns = columns;
   let __data = data;
+  let _data = data;
   let currentPage = null;
   let pc, ps, mp, bf, sc, bx, rd, br;
 
@@ -58,8 +70,10 @@ d3.csv("./dataset/car_prices_cleaned.csv").then(async (data) => {
     map_control,
     data,
     function (flag) {
-      const _data = data.filter((d) => getStates().has(d.state));
+      _data = data.filter((d) => getStates().has(d.state));
+      console.log(getBrands());
       updateBubble(_data);
+      console.log(getBrands());
       __data = _data.filter((d) => getBrands().has(d.make));
 
       // updateMap(_data);
@@ -165,9 +179,8 @@ d3.csv("./dataset/car_prices_cleaned.csv").then(async (data) => {
     bubble_container,
     data,
     (flag) => {
-      const _data = data.filter((d) => getBrands().has(d.make));
+      _data = data.filter((d) => getBrands().has(d.make));
       updateMap(_data);
-
       __data = _data.filter((d) => getStates().has(d.state));
       bx?.updateBoxPlot(__data);
       sc?.updateScatter(__data);

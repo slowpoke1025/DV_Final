@@ -60,7 +60,7 @@
     fill: #16a084cb;
     stroke: #333;
     stroke-width: 1px;
-    transition: fill .5s, cx .5s, cy .5s;
+    transition: fill .4s, cx .4s, cy .4s;
 }
 
 .dot:hover {

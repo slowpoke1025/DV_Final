@@ -7,7 +7,7 @@ export function Parallel_Sets(main, data) {
     y: _y,
   } = main.getBoundingClientRect();
   console.log(main_width, main_height);
-  const margin = { top: 60, right: 80, bottom: 30, left: 80 },
+  const margin = { top: 60, right: 60, bottom: 30, left: 60 },
     width = +main_width - margin.left - margin.right,
     height = +main_height - margin.top - margin.bottom;
 
@@ -77,7 +77,7 @@ export function Parallel_Sets(main, data) {
     // d.sellingprice = Math.round(d.sellingprice / 10000);
   });
 
-  const columns = ["body", "transmission", "interior", "color"];
+  const columns = ["make", "body", "transmission", "interior", "color"];
 
   let nodesByKey = {};
   let graph = generateGraph(data, columns);
