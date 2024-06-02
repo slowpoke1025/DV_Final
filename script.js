@@ -25,7 +25,7 @@ d3.csv("./dataset/car_prices_cleaned.csv").then(async (data) => {
   //   }
   //   return d;
   // });
-  data = data.slice(10000, 12000); // 10000, 16000
+  data = data.slice(10000, 20000); // 10000, 16000
   data.columns = columns;
   let __data = data;
   let _data = data;
